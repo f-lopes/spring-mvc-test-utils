@@ -4,6 +4,8 @@
 
 [![codecov](https://codecov.io/gh/f-lopes/spring-mvc-test-utils/branch/master/graph/badge.svg?token=2yY70RB1tw)](https://codecov.io/gh/f-lopes/spring-mvc-test-utils)
 
+[![versioneye](https://www.versioneye.com/user/projects/57dd76f8037c2000458f6c52/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57dd76f8037c2000458f6c52/)
+
 Test library aimed to ease Spring MVC form validation tests. Easily post an entire form to a given url.
 
 See [MockMvcRequestBuilderUtils](src/main/java/io/florianlopes/spring/test/web/servlet/request/MockMvcRequestBuilderUtils.java)
