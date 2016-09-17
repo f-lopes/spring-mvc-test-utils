@@ -1,0 +1,6 @@
+machine:
+  java:
+    version: openjdk8
+test:
+  post:
+    - bash <(curl -s https://codecov.io/bash) -t 86d65dba-305d-45a1-8ed3-6188a79115f0
