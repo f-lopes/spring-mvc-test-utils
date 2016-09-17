@@ -2,7 +2,7 @@
 
 Test library aimed to ease Spring MVC form validation tests. Easily post an entire form to a given url.
 
-See [MockMvcRequestBuilderUtils](src/main/java/io.florianlopes.spring.test.web.servlet.request.MockMvcRequestBuilderUtils)
+See [MockMvcRequestBuilderUtils](src/main/java/io/florianlopes/spring/test/web/servlet/request/MockMvcRequestBuilderUtils.java)
 
 ## How to use?
 ```MockMvcRequestBuilderUtils.postForm("/url", formObject);```
