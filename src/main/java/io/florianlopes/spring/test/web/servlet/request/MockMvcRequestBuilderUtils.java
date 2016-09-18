@@ -113,7 +113,7 @@ public class MockMvcRequestBuilderUtils {
     }
 
     private static Map<String, String> getCollectionFields(Iterable<?> iterable, String path, Field field) {
-        Map<String, String> fields = new TreeMap<>();
+        final Map<String, String> fields = new TreeMap<>();
         int i = 0;
         for (Object object : iterable) {
             fields.put(getPositionedField(path, field, i), getStringValue(object));

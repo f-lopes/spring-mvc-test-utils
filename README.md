@@ -11,6 +11,9 @@ Test library aimed to ease Spring MVC form validation tests. Easily post an enti
 See [MockMvcRequestBuilderUtils](src/main/java/io/florianlopes/spring/test/web/servlet/request/MockMvcRequestBuilderUtils.java)
 
 ## How to use?
+
+This library will be soon available at the Maven Central Repository http://search.maven.org/.
+
 ```MockMvcRequestBuilderUtils.postForm("/url", formObject);```
 
 Example:

@@ -142,22 +142,13 @@ public class MockMvcRequestBuilderUtilsTests {
 
     @Test
     public void registerCustomPropertyEditor() {
-
-        MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor("dd/MM/yyyy"));
-        final AddUserForm addUserForm = new AddUserForm("John", "Doe", LocalDate.now(), null);
+        MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
+        final LocalDate userBirthDate = LocalDate.of(2016, 8, 29);
+        final AddUserForm addUserForm = new AddUserForm("John", "Doe", userBirthDate, null);
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
 
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
-        assertEquals(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), request.getParameter("birthDate"));
-
-//
-//        MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
-//        final LocalDate userBirthDate = LocalDate.of(2016, 8, 29);
-//        final AddUserForm addUserForm = new AddUserForm("John", "Doe", userBirthDate, null);
-//        final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
-//
-//        MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
-//        assertEquals(userBirthDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)), request.getParameter("birthDate"));
+        assertEquals(userBirthDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)), request.getParameter("birthDate"));
     }
 
     @Test
