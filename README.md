@@ -47,3 +47,24 @@ final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcReque
 MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 assertEquals(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), request.getParameter("birthDate"));
 ```
+
+## Contributing
+
+Feel free to contribute using this guide:
+
+1. Fork this project
+2. Clone your forked repository
+    ```git clone git@github.com:{your-username}/spring-mvc-test-utils.git```
+3. Add a new remote pointing to the original repository
+    ```git remote add upstream git@github.com:flopes/spring-mvc-test-utils.git```
+4. Create a new branch for your feature
+    ```git branch -b my-feature```
+5. Commit your changes (and squash them if necessary using `git rebase -i` or `git add -p`)
+6. Pull the latest changes from the original repository
+    ```git checkout master && git pull --rebase upstream master```
+7. Rebase master branch with your feature
+    ```git checkout my-feature && git rebase master```
+    Solve any existing conflicts
+8. Push your changes and create a PR on GitHub
+    ```git push -u origin my-feature```
+    Go to the original repository and create a new PR with comments.
