@@ -10,6 +10,8 @@ Test library aimed to ease Spring MVC form validation tests. Easily post an enti
 
 See [MockMvcRequestBuilderUtils](src/main/java/io/florianlopes/spring/test/web/servlet/request/MockMvcRequestBuilderUtils.java)
 
+More details here: [blog.florianlopes.io](https://blog.florianlopes.io/tool-for-spring-mockmvcrequestbuilder-forms-tests/)
+
 ## How to use?
 
 Add this dependency to your pom.xml file:
@@ -34,6 +36,14 @@ public void testSimpleFields() throws Exception {
     assertEquals("John", request.getParameter("firstName"));
     assertEquals("New York", request.getParameter("address.city"));
 }
+```
+
+Usage with MockMvc:
+```
+mockMvc.perform(MockMvcRequestBuilderUtils.postForm("/users", new AddUserForm("John", "Doe", null, null)))
+        .andExpect(MockMvcResultMatchers.status().isFound())
+        .andExpect(MockMvcResultMatchers.redirectedUrl("/users"))
+        .andExpect(MockMvcResultMatchers.flash().attribute("message", "success"));
 ```
 
 ### Register property editor(s)
