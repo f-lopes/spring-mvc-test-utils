@@ -20,6 +20,7 @@ Add this dependency to your pom.xml file:
     <groupId>io.florianlopes</groupId>
     <artifactId>spring-mvc-test-utils</artifactId>
     <version>1.0.1</version>
+    <scope>test</scope>
 </dependency>
 ```
 
