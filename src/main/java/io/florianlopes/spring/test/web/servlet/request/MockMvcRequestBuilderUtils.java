@@ -182,6 +182,7 @@ public class MockMvcRequestBuilderUtils {
                 && !String.class.isAssignableFrom(type)
                 && !Date.class.isAssignableFrom(type)
                 && !Temporal.class.isAssignableFrom(type)
+                && type.getSuperclass() != null
                 && !Enum.class.isAssignableFrom(type.getSuperclass());
     }
 
