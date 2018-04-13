@@ -6,7 +6,7 @@
 
     <groupId>io.florianlopes</groupId>
     <artifactId>spring-mvc-test-utils</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>spring-mvc-test-utils</name>
