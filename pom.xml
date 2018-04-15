@@ -11,7 +11,7 @@
 
     <name>spring-mvc-test-utils</name>
     <description>Spring MVC utils aimed to ease Spring MVC framework testing</description>
-    <url>http://blog.florianlopes.io</url>
+    <url>https://blog.florianlopes.io</url>
 
     <licenses>
         <license>
@@ -38,6 +38,8 @@
 		<maven-pmd-plugin.version>3.9.0</maven-pmd-plugin.version>
 		<maven-source-plugin.version>3.0.1</maven-source-plugin.version>
 		<maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
+		<maven-jxr-plugin.version>2.5</maven-jxr-plugin.version>
+		<logback-classic.version>1.2.3</logback-classic.version>
 	</properties>
 
     <dependencies>
@@ -58,6 +60,12 @@
             <version>${spring-test.version}</version>
             <scope>provided</scope>
         </dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback-classic.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
         <!-- Test dependencies -->
         <dependency>
@@ -76,7 +84,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>${javax.servlet-api.version}</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -166,11 +174,25 @@
 				<version>${maven-pmd-plugin.version}</version>
 				<configuration>
 					<printFailingErrors>true</printFailingErrors>
+					<analysisCache>true</analysisCache>
 				</configuration>
 				<executions>
 					<execution>
 						<goals>
 							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>${maven-jxr-plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>jxr</goal>
 						</goals>
 					</execution>
 				</executions>
