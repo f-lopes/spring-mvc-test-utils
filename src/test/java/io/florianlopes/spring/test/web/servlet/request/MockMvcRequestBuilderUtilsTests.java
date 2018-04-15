@@ -1,5 +1,7 @@
 package io.florianlopes.spring.test.web.servlet.request;
 
+import java.util.HashMap;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +37,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void correctUrl() throws Exception {
+    public void correctUrl() {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL,
                 new AddUserForm("John", "Doe", null, null));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -64,7 +66,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void simpleFields() throws Exception {
+    public void simpleFields() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .firstName("John").name("Doe")
                 .currentAddress(new Address(1, "Street", 5222, "New York"))
@@ -141,6 +143,21 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
+    public void simpleMapField() {
+        final Map<String, String> metadatas = new HashMap<>();
+        metadatas.put("firstName", "John");
+        metadatas.put("name", "Doe");
+        final AddUserForm addUserForm = AddUserForm.builder()
+                .metadatas(metadatas)
+                .build();
+        final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
+        final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
+
+        assertEquals("John", request.getParameter("metadatas[firstName]"));
+        assertEquals("Doe", request.getParameter("metadatas[name]"));
+    }
+
+    @Test
     public void registerCustomPropertyEditor() {
         MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
         final LocalDate userBirthDate = LocalDate.of(2016, 8, 29);
@@ -176,6 +193,7 @@ public class MockMvcRequestBuilderUtilsTests {
         private String[] usernamesArray;
         private List<Diploma> diplomas;
         private Address[] formerAddresses;
+        private Map<String, String> metadatas;
 
         public AddUserForm(String firstName, String name, LocalDate birthDate, Address currentAddress) {
             this.firstName = firstName;

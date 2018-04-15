@@ -1,15 +1,5 @@
 package io.florianlopes.spring.test.web.servlet.request;
 
-import org.apache.commons.lang3.CharEncoding;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.springframework.http.MediaType;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.CollectionUtils;
-
 import java.beans.PropertyEditor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -23,16 +13,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Custom MockMvcRequestBuilder to post an entire form to a given url.
  * Useful to test Spring MVC form validation.
+ *
  * @author Florian Lopes
  * @see org.springframework.test.web.servlet.request.MockMvcRequestBuilders
  */
 public class MockMvcRequestBuilderUtils {
 
     private static final Map<Class, PropertyEditor> propertyEditors = new HashMap<>();
+
+    private static final Log logger = LogFactory.getLog(MockMvcRequestBuilderUtils.class);
 
     private MockMvcRequestBuilderUtils() {
     }
@@ -63,16 +66,20 @@ public class MockMvcRequestBuilderUtils {
 
     /**
      * Post a form to the given url.
-     * All non null form fields will be posted as HTTP parameters using POST method
-     * @param url url to post the form to
+     * All non-null form fields will be added as HTTP request parameters using POST method
+     *
+     * @param url the URL to post the form to
      * @param form form object to send using POST method
      * @return mockHttpServletRequestBuilder wrapped mockHttpServletRequestBuilder
      */
     public static MockHttpServletRequestBuilder postForm(String url, Object form) {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(url)
-                .characterEncoding(CharEncoding.UTF_8).contentType(MediaType.APPLICATION_FORM_URLENCODED);
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         final Map<String, String> formFields = getFormFields(form, new TreeMap<>(), StringUtils.EMPTY);
-        formFields.forEach(mockHttpServletRequestBuilder::param);
+        formFields.forEach((path, value) -> {
+            logger.debug(String.format("Adding form field (%s=%s) to HTTP request parameters", path, value));
+            mockHttpServletRequestBuilder.param(path, value);
+        });
 
         return mockHttpServletRequestBuilder;
     }
@@ -80,23 +87,30 @@ public class MockMvcRequestBuilderUtils {
     private static Map<String, String> getFormFields(Object form, Map<String, String> formFields, String path) {
         final List<Field> fields = form != null ? Arrays.asList(FieldUtils.getAllFields(form.getClass())) : new ArrayList<>();
         for (Field field : fields) {
-            if (isIterable(field.getType())) {
-                final Iterable<?> iterable = getIterable(getFieldValue(form, field), field.getType());
-                if (iterable != null) {
+            final Class<?> fieldType = field.getType();
+            final Object fieldValue = getFieldValue(form, field);
+            if (isIterable(fieldType)) {
+                final Iterable<?> iterableObject = getIterable(fieldValue, fieldType);
+                if (iterableObject != null) {
                     if (isComplexField(field)) {
                         int i = 0;
-                        for (Object o : iterable) {
+                        for (Object object : iterableObject) {
                             final String nestedPath = getPositionedField(path, field, i) + ".";
-                            formFields.putAll(getFormFields(o, formFields, nestedPath));
+                            formFields.putAll(getFormFields(object, formFields, nestedPath));
                             i++;
                         }
                     } else {
-                        formFields.putAll(getCollectionFields(iterable, path, field));
+                        formFields.putAll(getCollectionFields(iterableObject, path, field));
                     }
+                }
+            } else if (isMap(fieldType)) {
+                final Map<?, ?> map = getMap(fieldValue, fieldType);
+                if (map != null) {
+                    map.forEach((key, value) -> formFields.put(getPositionedField(path, field, getStringValue(key)), getStringValue(value)));
                 }
             } else {
                 if (isComplexField(field)) {
-                    final String nestedPath = getNestedPath(path, field);
+                    final String nestedPath = getNestedPath(field);
                     formFields.putAll(getFormFields(ReflectionTestUtils.getField(form, field.getName()), formFields, nestedPath));
                 } else {
                     formFields.put(path + field.getName(), getFieldStringValue(form, field));
@@ -106,10 +120,12 @@ public class MockMvcRequestBuilderUtils {
         return formFields;
     }
 
+    private static Map<?, ?> getMap(Object fieldValue, Class<?> type) {
+        return Map.class.isAssignableFrom(type) ? (Map) fieldValue : null;
+    }
+
     private static Iterable<?> getIterable(Object fieldValue, Class<?> type) {
-        return fieldValue != null
-                ? Iterable.class.isAssignableFrom(type) ? (Iterable<?>) fieldValue : CollectionUtils.arrayToList(fieldValue)
-                : null;
+        return Iterable.class.isAssignableFrom(type) ? (Iterable<?>) fieldValue : CollectionUtils.arrayToList(fieldValue);
     }
 
     private static Map<String, String> getCollectionFields(Iterable<?> iterable, String path, Field field) {
@@ -123,13 +139,15 @@ public class MockMvcRequestBuilderUtils {
     }
 
     private static String getPositionedField(String path, Field field, int position) {
-        return path + field.getName() + "[" + position + "]";
+        return getPositionedField(path, field, String.valueOf(position));
     }
 
-    private static String getNestedPath(String path, Field field) {
-        return StringUtils.isNotEmpty(path)
-                ? path + field.getName() + "."
-                : field.getName() + ".";
+    private static String getPositionedField(String path, Field field, String positionOrKey) {
+        return String.format("%s%s[%s]", path, field.getName(), positionOrKey);
+    }
+
+    private static String getNestedPath(Field field) {
+        return field.getName() + ".";
     }
 
     private static Object getFieldValue(Object form, Field field) {
@@ -157,7 +175,7 @@ public class MockMvcRequestBuilderUtils {
         final Optional<Map.Entry<Class, PropertyEditor>> propertyEditorEntry = propertyEditors.entrySet().stream()
                 .filter(entry -> entry.getKey().equals(object.getClass()))
                 .findFirst();
-        return propertyEditorEntry.isPresent() ? propertyEditorEntry.get().getValue() : null;
+        return propertyEditorEntry.map(Map.Entry::getValue).orElse(null);
     }
 
     private static boolean isComplexField(Field field) {
@@ -188,5 +206,9 @@ public class MockMvcRequestBuilderUtils {
 
     private static boolean isIterable(Class fieldClass) {
         return Iterable.class.isAssignableFrom(fieldClass) || Object[].class.isAssignableFrom(fieldClass);
+    }
+
+    private static boolean isMap(Class<?> type) {
+        return Map.class.isAssignableFrom(type);
     }
 }
