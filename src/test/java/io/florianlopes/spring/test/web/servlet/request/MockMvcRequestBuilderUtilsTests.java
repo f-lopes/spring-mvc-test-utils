@@ -1,25 +1,18 @@
 package io.florianlopes.spring.test.web.servlet.request;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import javax.servlet.ServletContext;
 import org.apache.commons.lang3.StringUtils;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-
-import javax.servlet.ServletContext;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Florian Lopes
@@ -69,7 +62,7 @@ public class MockMvcRequestBuilderUtilsTests {
     public void simpleFields() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .firstName("John").name("Doe")
-                .currentAddress(new Address(1, "Street", 5222, "New York"))
+                .currentAddress(new AddUserForm.Address(1, "Street", 5222, "New York"))
                 .build();
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -96,7 +89,7 @@ public class MockMvcRequestBuilderUtilsTests {
         MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
         final LocalDate bachelorDate = LocalDate.now().minusYears(2);
         final LocalDate masterDate = LocalDate.now();
-        addUserForm.setDiplomas(Arrays.asList(new Diploma("License", bachelorDate), new Diploma("MSC", masterDate)));
+        addUserForm.setDiplomas(Arrays.asList(new AddUserForm.Diploma("License", bachelorDate), new AddUserForm.Diploma("MSC", masterDate)));
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
 
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -109,7 +102,7 @@ public class MockMvcRequestBuilderUtilsTests {
     @Test
     public void simpleArray() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe")
-                .usernamesArray(new String[] {"john.doe", "jdoe"})
+                .usernamesArray(new String[]{"john.doe", "jdoe"})
                 .build();
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -122,7 +115,10 @@ public class MockMvcRequestBuilderUtilsTests {
     public void complexArray() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe")
                 .usernames(Arrays.asList("john.doe", "jdoe"))
-                .formerAddresses(new Address[] {new Address(10, "Street", 5222, "Chicago"), new Address(20, "Street", 5222, "Washington")})
+                .formerAddresses(new AddUserForm.Address[]{
+                        new AddUserForm.Address(10, "Street", 5222, "Chicago"),
+                        new AddUserForm.Address(20, "Street", 5222, "Washington")
+                })
                 .build();
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -134,7 +130,7 @@ public class MockMvcRequestBuilderUtilsTests {
     @Test
     public void enumField() {
         final AddUserForm addUserForm = AddUserForm.builder()
-                .firstName("John").name("Doe").gender(Gender.MALE)
+                .firstName("John").name("Doe").gender(AddUserForm.Gender.MALE)
                 .build();
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -191,58 +187,5 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequest secondRequest = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm).buildRequest(this.servletContext);
 
         assertEquals(String.valueOf(userBirthDate), secondRequest.getParameter("birthDate"));
-    }
-
-    @Builder
-    @RequiredArgsConstructor
-    @AllArgsConstructor
-    @Setter
-    static class AddUserForm {
-        private String firstName;
-        private String name;
-        private Gender gender;
-        private LocalDate birthDate;
-        private Address currentAddress;
-        private List<String> usernames;
-        private String[] usernamesArray;
-        private List<Diploma> diplomas;
-        private Address[] formerAddresses;
-        private Map<String, String> metadatas;
-
-        public AddUserForm(String firstName, String name, LocalDate birthDate, Address currentAddress) {
-            this.firstName = firstName;
-            this.name = name;
-            this.birthDate = birthDate;
-            this.currentAddress = currentAddress;
-        }
-    }
-
-    enum Gender {
-        MALE,
-        FEMALE
-    }
-
-    static class Diploma {
-        private String name;
-        private LocalDate date;
-
-        public Diploma(String name, LocalDate date) {
-            this.name = name;
-            this.date = date;
-        }
-    }
-
-    static class Address {
-        private int streetNumber;
-        private String streetName;
-        private int postalCode;
-        private String city;
-
-        public Address(int streetNumber, String streetName, int postalCode, String city) {
-            this.streetNumber = streetNumber;
-            this.streetName = streetName;
-            this.postalCode = postalCode;
-            this.city = city;
-        }
     }
 }
