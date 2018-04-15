@@ -158,7 +158,8 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void registerCustomPropertyEditor() {
+    public void unregisterPropertyEditor() {
+        // Register a property editor and ensure it is used
         MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
         final LocalDate userBirthDate = LocalDate.of(2016, 8, 29);
         final AddUserForm addUserForm = new AddUserForm("John", "Doe", userBirthDate, null);
@@ -166,17 +167,30 @@ public class MockMvcRequestBuilderUtilsTests {
 
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         assertEquals(userBirthDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)), request.getParameter("birthDate"));
+
+        // Unregister the property editor and ensure it is not used anymore
+        MockMvcRequestBuilderUtils.unregisterPropertyEditor(LocalDate.class);
+        final MockHttpServletRequest secondRequest = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm).buildRequest(this.servletContext);
+
+        assertEquals(String.valueOf(userBirthDate), secondRequest.getParameter("birthDate"));
     }
 
     @Test
-    public void unregisterPropertyEditor() {
-        MockMvcRequestBuilderUtils.unregisterPropertyEditor(LocalDate.class);
+    public void unregisterPropertyEditors() {
+        // Register a property editor and ensure it is used
+        MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
         final LocalDate userBirthDate = LocalDate.of(2016, 8, 29);
         final AddUserForm addUserForm = new AddUserForm("John", "Doe", userBirthDate, null);
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
 
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
-        assertEquals(String.valueOf(userBirthDate), request.getParameter("birthDate"));
+        assertEquals(userBirthDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)), request.getParameter("birthDate"));
+
+        // Unregister all property editors and ensure the previously registered property editor is not used anymore
+        MockMvcRequestBuilderUtils.unregisterPropertyEditors();
+        final MockHttpServletRequest secondRequest = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm).buildRequest(this.servletContext);
+
+        assertEquals(String.valueOf(userBirthDate), secondRequest.getParameter("birthDate"));
     }
 
     @Builder
