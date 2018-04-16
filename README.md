@@ -59,6 +59,27 @@ MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this
 assertEquals(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), request.getParameter("birthDate"));
 ```
 
+## Limitations and restrictions
+This helper utility handles your form objects using the Java Reflection API. This implies
+some restrictions in the usage within your test cases:
+
+* As long as you use simple, common Java types like `String`, etc, the mocked
+  HTTPServletRequest should not fail to be processed by data binding.
+* You can always provide a custom property editor (see above).
+
+* Converting data using classes from the Java Collection API is supported since
+  version 1.0.0. The parameters will follow the convention `name[index] = value`.
+  * Currently, no multidimensional collections (like array of arrays) are supported.
+
+* Converting data using classes from the Java Map API is supported in a simple
+  manner since version 1.1.0. The parameters will follow the convention
+  `name[key] = value`.
+  * Currently, no map of maps is supported, only simple datatypes with key and
+    value easily transformable to a `String`.
+
+* As a last resort, your properties will be converted using the `toString()`
+  method of the member object under the name of the object.
+
 ## Contributing
 
 Feel free to contribute using this guide:
