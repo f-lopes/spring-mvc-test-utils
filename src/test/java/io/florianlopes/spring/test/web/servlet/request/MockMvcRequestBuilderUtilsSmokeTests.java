@@ -1,5 +1,7 @@
 package io.florianlopes.spring.test.web.servlet.request;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,6 +65,8 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
                 .usernames(Arrays.asList("john.doe", "jdoe"))
                 .usernamesArray(new String[]{"john.doe", "jdoe"})
                 .gender(AddUserForm.Gender.MALE)
+                .identificationNumber(BigDecimal.ONE)
+                .identificationNumberBigInt(BigInteger.ONE)
                 .currentAddress(new AddUserForm.Address(1, "Street", 5222, "New York"))
                 .formerAddresses(new AddUserForm.Address[]{
                         new AddUserForm.Address(10, "Street", 5222, "Chicago"),

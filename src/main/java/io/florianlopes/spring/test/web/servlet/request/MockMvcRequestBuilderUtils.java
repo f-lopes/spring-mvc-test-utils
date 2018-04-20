@@ -8,15 +8,15 @@ import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.PropertyEditorRegistrySupport;
+import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -33,7 +33,7 @@ import org.springframework.util.CollectionUtils;
  */
 public class MockMvcRequestBuilderUtils {
 
-    private static final Map<Class, PropertyEditor> propertyEditors = new HashMap<>();
+    private static final PropertyEditorRegistrySupport propertyEditorRegistry = new SimpleTypeConverter();
 
     private static final Log logger = LogFactory.getLog(MockMvcRequestBuilderUtils.class);
 
@@ -42,26 +42,12 @@ public class MockMvcRequestBuilderUtils {
 
     /**
      * Register custom property editor for a given type.
+     *
      * @param type type of the property
      * @param propertyEditor {@link PropertyEditor} to register
      */
     public static void registerPropertyEditor(Class type, PropertyEditor propertyEditor) {
-        propertyEditors.put(type, propertyEditor);
-    }
-
-    /**
-     * Unregister custom property editor for a given type
-     * @param type type of the property
-     */
-    public static void unregisterPropertyEditor(Class type) {
-        propertyEditors.remove(type);
-    }
-
-    /**
-     * Unregister all previously registered property editors
-     */
-    public static void unregisterPropertyEditors() {
-        propertyEditors.clear();
+        propertyEditorRegistry.registerCustomEditor(type, propertyEditor);
     }
 
     /**
@@ -89,31 +75,39 @@ public class MockMvcRequestBuilderUtils {
         for (Field field : fields) {
             final Class<?> fieldType = field.getType();
             final Object fieldValue = getFieldValue(form, field);
-            if (isIterable(fieldType)) {
-                final Iterable<?> iterableObject = getIterable(fieldValue, fieldType);
-                if (iterableObject != null) {
-                    if (isComplexField(field)) {
-                        int i = 0;
-                        for (Object object : iterableObject) {
-                            final String nestedPath = getPositionedField(path, field, i) + ".";
-                            formFields.putAll(getFormFields(object, formFields, nestedPath));
-                            i++;
+            if (fieldValue != null) {
+                if (isIterable(fieldType)) {
+                    final Iterable<?> iterableObject = getIterable(fieldValue, fieldType);
+                    if (iterableObject != null) {
+                        if (isComplexField(field)) {
+                            int i = 0;
+                            for (Object object : iterableObject) {
+                                final String nestedPath = getPositionedField(path, field, i) + ".";
+                                formFields.putAll(getFormFields(object, formFields, nestedPath));
+                                i++;
+                            }
+                        } else {
+                            formFields.putAll(getCollectionFields(iterableObject, path, field));
                         }
-                    } else {
-                        formFields.putAll(getCollectionFields(iterableObject, path, field));
                     }
-                }
-            } else if (isMap(fieldType)) {
-                final Map<?, ?> map = getMap(fieldValue, fieldType);
-                if (map != null) {
-                    map.forEach((key, value) -> formFields.put(getPositionedField(path, field, getStringValue(key)), getStringValue(value)));
-                }
-            } else {
-                if (isComplexField(field)) {
-                    final String nestedPath = getNestedPath(field);
-                    formFields.putAll(getFormFields(ReflectionTestUtils.getField(form, field.getName()), formFields, nestedPath));
+                } else if (isMap(fieldType)) {
+                    final Map<?, ?> map = getMap(fieldValue, fieldType);
+                    if (map != null) {
+                        map.forEach((key, value) -> formFields.put(getPositionedField(path, field, getStringValue(key)), getStringValue(value)));
+                    }
                 } else {
-                    formFields.put(path + field.getName(), getFieldStringValue(form, field));
+                    final PropertyEditor fieldPropertyEditor = getPropertyEditorFor(fieldValue);
+                    if (fieldPropertyEditor != null) {
+                        fieldPropertyEditor.setValue(fieldValue);
+                        formFields.put(path + field.getName(), fieldPropertyEditor.getAsText());
+                    } else {
+                        if (isComplexField(field)) {
+                            final String nestedPath = getNestedPath(field);
+                            formFields.putAll(getFormFields(ReflectionTestUtils.getField(form, field.getName()), formFields, nestedPath));
+                        } else {
+                            formFields.put(path + field.getName(), getFieldStringValue(form, field));
+                        }
+                    }
                 }
             }
         }
@@ -172,10 +166,9 @@ public class MockMvcRequestBuilderUtils {
     }
 
     private static PropertyEditor getPropertyEditorFor(Object object) {
-        final Optional<Map.Entry<Class, PropertyEditor>> propertyEditorEntry = propertyEditors.entrySet().stream()
-                .filter(entry -> entry.getKey().equals(object.getClass()))
-                .findFirst();
-        return propertyEditorEntry.map(Map.Entry::getValue).orElse(null);
+        return propertyEditorRegistry.hasCustomEditorForElement(object.getClass(), null) ?
+                propertyEditorRegistry.findCustomEditor(object.getClass(), null) :
+                propertyEditorRegistry.getDefaultEditor(object.getClass());
     }
 
     private static boolean isComplexField(Field field) {
