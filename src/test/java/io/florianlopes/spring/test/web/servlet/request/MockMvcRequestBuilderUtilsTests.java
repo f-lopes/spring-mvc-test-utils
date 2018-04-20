@@ -148,6 +148,7 @@ public class MockMvcRequestBuilderUtilsTests {
         final Map<String, String> metadatas = new HashMap<>();
         metadatas.put("firstName", "John");
         metadatas.put("name", "Doe");
+        metadatas.put("gender", null);
         final AddUserForm addUserForm = AddUserForm.builder()
                 .metadatas(metadatas)
                 .build();
@@ -156,6 +157,7 @@ public class MockMvcRequestBuilderUtilsTests {
 
         assertEquals("John", request.getParameter("metadatas[firstName]"));
         assertEquals("Doe", request.getParameter("metadatas[name]"));
+        assertEquals("", request.getParameter("metadatas[gender]"));
     }
 
     @Test
