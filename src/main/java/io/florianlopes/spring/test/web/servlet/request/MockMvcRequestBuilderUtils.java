@@ -96,12 +96,12 @@ public class MockMvcRequestBuilderUtils {
                         map.forEach((key, value) -> formFields.put(getPositionedField(path, field, getStringValue(key)), getStringValue(value)));
                     }
                 } else {
-                    final PropertyEditor fieldPropertyEditor = getPropertyEditorFor(fieldValue);
-                    if (fieldPropertyEditor != null) {
-                        fieldPropertyEditor.setValue(fieldValue);
-                        formFields.put(path + field.getName(), fieldPropertyEditor.getAsText());
+                    if (hasPropertyEditorFor(fieldValue.getClass())) {
+                        // Resolve field's value using property editor
+                        formFields.put(path + field.getName(), getFieldStringValue(form, field));
                     } else {
                         if (isComplexField(field)) {
+                            // Iterate over object's fields
                             final String nestedPath = getNestedPath(field);
                             formFields.putAll(getFormFields(ReflectionTestUtils.getField(form, field.getName()), formFields, nestedPath));
                         } else {
@@ -163,6 +163,11 @@ public class MockMvcRequestBuilderUtils {
             return String.valueOf(object);
         }
         return StringUtils.EMPTY;
+    }
+
+    private static boolean hasPropertyEditorFor(Class<?> type) {
+        return propertyEditorRegistry.hasCustomEditorForElement(type, null) ||
+                propertyEditorRegistry.getDefaultEditor(type) != null;
     }
 
     private static PropertyEditor getPropertyEditorFor(Object object) {
