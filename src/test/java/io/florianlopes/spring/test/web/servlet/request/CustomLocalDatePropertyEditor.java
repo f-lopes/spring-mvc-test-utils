@@ -1,11 +1,10 @@
 package io.florianlopes.spring.test.web.servlet.request;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Property editor for {@link java.time.LocalDate}
@@ -19,10 +18,10 @@ import java.time.format.DateTimeFormatter;
  */
 class CustomLocalDatePropertyEditor extends PropertyEditorSupport {
 
-    private LocalDate localDate;
     private final DateTimeFormatter dateTimeFormatter;
+    private LocalDate localDate;
 
-    public CustomLocalDatePropertyEditor(String dateFormatPattern) {
+    CustomLocalDatePropertyEditor(String dateFormatPattern) {
         this.dateTimeFormatter = DateTimeFormatter.ofPattern(dateFormatPattern);
     }
 

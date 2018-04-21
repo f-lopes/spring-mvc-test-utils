@@ -48,7 +48,10 @@ mockMvc.perform(MockMvcRequestBuilderUtils.postForm("/users", new AddUserForm("J
 ```
 
 ### Register property editor(s)
-Register a PropertyEditor to send properly formatted fields:
+
+This tool relies on default Spring's property editors (see https://github.com/spring-projects/spring-framework/blob/master/spring-beans/src/main/java/org/springframework/beans/PropertyEditorRegistrySupport.java#L200).
+
+If you want to override one of those registered by default, simple use the `MockMvcRequestBuilderUtils.registerPropertyEditor(...)` method:
 ```
 MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor("dd/MM/yyyy"));
 

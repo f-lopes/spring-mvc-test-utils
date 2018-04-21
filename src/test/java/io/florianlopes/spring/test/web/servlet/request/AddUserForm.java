@@ -1,5 +1,7 @@
 package io.florianlopes.spring.test.web.servlet.request;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -18,12 +20,16 @@ import org.springframework.format.annotation.DateTimeFormat;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class AddUserForm {
+class AddUserForm {
 
     @NotEmpty
     private String firstName;
     @NotEmpty
     private String name;
+    @NotNull
+    private BigDecimal identificationNumber;
+    @NotNull
+    private BigInteger identificationNumberBigInt;
     @NotNull
     private Gender gender;
     @NotNull
@@ -42,7 +48,7 @@ public class AddUserForm {
     @NotEmpty
     private Map<String, String> metadatas;
 
-    public AddUserForm(String firstName, String name, LocalDate birthDate, Address currentAddress) {
+    AddUserForm(String firstName, String name, LocalDate birthDate, Address currentAddress) {
         this.firstName = firstName;
         this.name = name;
         this.birthDate = birthDate;
@@ -63,7 +69,7 @@ public class AddUserForm {
         @NotNull
         private LocalDate date;
 
-        public Diploma(String name, LocalDate date) {
+        Diploma(String name, LocalDate date) {
             this.name = name;
             this.date = date;
         }
@@ -81,7 +87,7 @@ public class AddUserForm {
         @NotEmpty
         private String city;
 
-        public Address(int streetNumber, String streetName, int postalCode, String city) {
+        Address(int streetNumber, String streetName, int postalCode, String city) {
             this.streetNumber = streetNumber;
             this.streetName = streetName;
             this.postalCode = postalCode;

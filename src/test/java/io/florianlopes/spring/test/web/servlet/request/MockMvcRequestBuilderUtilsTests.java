@@ -1,5 +1,8 @@
 package io.florianlopes.spring.test.web.servlet.request;
 
+import java.beans.PropertyEditorSupport;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -8,8 +11,10 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import org.apache.commons.lang3.StringUtils;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -54,8 +59,8 @@ public class MockMvcRequestBuilderUtilsTests {
 
         assertEquals(StringUtils.EMPTY, request.getParameter("name"));
         assertEquals(StringUtils.EMPTY, request.getParameter("firstName"));
-        assertEquals(StringUtils.EMPTY, request.getParameter("birthDate"));
-        assertEquals(null, request.getParameter("currentAddress.city"));
+        assertNull(request.getParameter("birthDate"));
+        assertNull(request.getParameter("currentAddress.city"));
     }
 
     @Test
@@ -143,6 +148,7 @@ public class MockMvcRequestBuilderUtilsTests {
         final Map<String, String> metadatas = new HashMap<>();
         metadatas.put("firstName", "John");
         metadatas.put("name", "Doe");
+        metadatas.put("gender", null);
         final AddUserForm addUserForm = AddUserForm.builder()
                 .metadatas(metadatas)
                 .build();
@@ -151,41 +157,50 @@ public class MockMvcRequestBuilderUtilsTests {
 
         assertEquals("John", request.getParameter("metadatas[firstName]"));
         assertEquals("Doe", request.getParameter("metadatas[name]"));
+        assertEquals("", request.getParameter("metadatas[gender]"));
     }
 
     @Test
-    public void unregisterPropertyEditor() {
-        // Register a property editor and ensure it is used
-        MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
-        final LocalDate userBirthDate = LocalDate.of(2016, 8, 29);
-        final AddUserForm addUserForm = new AddUserForm("John", "Doe", userBirthDate, null);
+    public void bigDecimal() {
+        final AddUserForm addUserForm = AddUserForm.builder()
+                .identificationNumber(BigDecimal.TEN)
+                .build();
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
+        final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
-        assertEquals(userBirthDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)), request.getParameter("birthDate"));
-
-        // Unregister the property editor and ensure it is not used anymore
-        MockMvcRequestBuilderUtils.unregisterPropertyEditor(LocalDate.class);
-        final MockHttpServletRequest secondRequest = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm).buildRequest(this.servletContext);
-
-        assertEquals(String.valueOf(userBirthDate), secondRequest.getParameter("birthDate"));
+        assertEquals("10", request.getParameter("identificationNumber"));
     }
 
     @Test
-    public void unregisterPropertyEditors() {
-        // Register a property editor and ensure it is used
-        MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
-        final LocalDate userBirthDate = LocalDate.of(2016, 8, 29);
-        final AddUserForm addUserForm = new AddUserForm("John", "Doe", userBirthDate, null);
+    public void bigInteger() {
+        final AddUserForm addUserForm = AddUserForm.builder()
+                .identificationNumberBigInt(BigInteger.TEN)
+                .build();
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
+        final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
-        assertEquals(userBirthDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)), request.getParameter("birthDate"));
+        assertEquals("10", request.getParameter("identificationNumberBigInt"));
+    }
 
-        // Unregister all property editors and ensure the previously registered property editor is not used anymore
-        MockMvcRequestBuilderUtils.unregisterPropertyEditors();
-        final MockHttpServletRequest secondRequest = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm).buildRequest(this.servletContext);
+    @Test
+    public void registerPropertyEditor() {
+        try {
+            // Registering a property editor should override default conversion strategy
+            MockMvcRequestBuilderUtils.registerPropertyEditor(BigInteger.class, new PropertyEditorSupport() {
+                @Override
+                public String getAsText() {
+                    return "textValue";
+                }
+            });
 
-        assertEquals(String.valueOf(userBirthDate), secondRequest.getParameter("birthDate"));
+            final AddUserForm build = AddUserForm.builder().identificationNumberBigInt(BigInteger.TEN).build();
+            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, build);
+
+            MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
+            assertEquals("textValue", request.getParameter("identificationNumberBigInt"));
+        } finally {
+            // Restore original property editor
+            MockMvcRequestBuilderUtils.registerPropertyEditor(BigInteger.class, new CustomNumberEditor(BigInteger.class, true));
+        }
     }
 }
