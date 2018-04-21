@@ -96,17 +96,13 @@ public class MockMvcRequestBuilderUtils {
                         map.forEach((key, value) -> formFields.put(getPositionedField(path, field, getStringValue(key)), getStringValue(value)));
                     }
                 } else {
-                    if (hasPropertyEditorFor(fieldValue.getClass())) {
-                        // Resolve field's value using property editor
-                        formFields.put(path + field.getName(), getFieldStringValue(form, field));
+                    if (!isComplexField(field) || hasPropertyEditorFor(fieldType)) {
+                        // Resolve field's value either using a property editor or its string representation
+                        formFields.put(path + field.getName(), getStringValue(fieldValue));
                     } else {
-                        if (isComplexField(field)) {
-                            // Iterate over object's fields
-                            final String nestedPath = getNestedPath(field);
-                            formFields.putAll(getFormFields(ReflectionTestUtils.getField(form, field.getName()), formFields, nestedPath));
-                        } else {
-                            formFields.put(path + field.getName(), getFieldStringValue(form, field));
-                        }
+                        // Iterate over object's fields
+                        final String nestedPath = getNestedPath(field);
+                        formFields.putAll(getFormFields(ReflectionTestUtils.getField(form, field.getName()), formFields, nestedPath));
                     }
                 }
             }
@@ -146,10 +142,6 @@ public class MockMvcRequestBuilderUtils {
 
     private static Object getFieldValue(Object form, Field field) {
         return ReflectionTestUtils.getField(form, field.getName());
-    }
-
-    private static String getFieldStringValue(Object object, Field field) {
-        return getStringValue(getFieldValue(object, field));
     }
 
     private static String getStringValue(Object object) {
