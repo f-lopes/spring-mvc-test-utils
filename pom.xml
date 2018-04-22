@@ -44,6 +44,7 @@
 		<javax.el.version>2.2.6</javax.el.version>
 		<javax.el-api.version>3.0.0</javax.el-api.version>
 		<hibernate-validator.version>6.0.2.Final</hibernate-validator.version>
+		<findbugs-maven-plugin.version>3.0.5</findbugs-maven-plugin.version>
 	</properties>
 
     <dependencies>
@@ -222,6 +223,19 @@
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>jxr</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>${findbugs-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
 						</goals>
 					</execution>
 				</executions>
