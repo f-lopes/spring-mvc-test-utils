@@ -203,4 +203,22 @@ public class MockMvcRequestBuilderUtilsTests {
             MockMvcRequestBuilderUtils.registerPropertyEditor(BigInteger.class, new CustomNumberEditor(BigInteger.class, true));
         }
     }
+
+    @Test
+    public void postMethod() {
+        final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL,
+                new AddUserForm("John", "Doe", null, null));
+        final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
+
+        assertEquals("POST", request.getMethod());
+    }
+
+    @Test
+    public void putMethod() {
+        final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.putForm(POST_FORM_URL,
+                new AddUserForm("John", "Doe", null, null));
+        final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
+
+        assertEquals("PUT", request.getMethod());
+    }
 }

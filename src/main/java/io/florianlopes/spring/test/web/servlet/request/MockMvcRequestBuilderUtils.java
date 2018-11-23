@@ -61,6 +61,24 @@ public class MockMvcRequestBuilderUtils {
     public static MockHttpServletRequestBuilder postForm(String url, Object form) {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(url)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
+        return buildFormFields(form, mockHttpServletRequestBuilder);
+    }
+
+    /**
+     * Put a form to the given url.
+     * All non-null form fields will be added as HTTP request parameters using PUT method
+     *
+     * @param url the URL to put the form to
+     * @param form form object to send using PUT method
+     * @return mockHttpServletRequestBuilder wrapped mockHttpServletRequestBuilder
+     */
+    public static MockHttpServletRequestBuilder putForm(String url, Object form) {
+        final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.put(url)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED);
+        return buildFormFields(form, mockHttpServletRequestBuilder);
+    }
+
+    private static MockHttpServletRequestBuilder buildFormFields(Object form, MockHttpServletRequestBuilder mockHttpServletRequestBuilder) {
         final Map<String, String> formFields = getFormFields(form, new TreeMap<>(), StringUtils.EMPTY);
         formFields.forEach((path, value) -> {
             logger.debug(String.format("Adding form field (%s=%s) to HTTP request parameters", path, value));
