@@ -1,5 +1,7 @@
 package io.florianlopes.spring.test.web.servlet.request;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -46,6 +48,19 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
         addUserForm.setDiplomas(Arrays.asList(new AddUserForm.Diploma("License", bachelorDate), new AddUserForm.Diploma("MSC", masterDate)));
 
         this.mockMvc.perform(MockMvcRequestBuilderUtils.postForm("/users", addUserForm))
+                .andExpect(MockMvcResultMatchers.model().hasNoErrors());
+    }
+    
+    @Test
+    public void withParamsFullTest() throws Exception {
+        final AddUserForm addUserForm = getCompletedAddUserForm();
+        
+        MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
+        final LocalDate bachelorDate = LocalDate.now().minusYears(2);
+        final LocalDate masterDate = LocalDate.now();
+        addUserForm.setDiplomas(Arrays.asList(new AddUserForm.Diploma("License", bachelorDate), new AddUserForm.Diploma("MSC", masterDate)));
+        
+        this.mockMvc.perform(post("/users").with(MockMvcRequestBuilderUtils.formParams(addUserForm)))
                 .andExpect(MockMvcResultMatchers.model().hasNoErrors());
     }
 
