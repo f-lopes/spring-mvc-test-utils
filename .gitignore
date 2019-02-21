@@ -38,6 +38,18 @@ hs_err_pid*
 # IntelliJ
 /out/
 
+### Eclipse / STS ###
+.apt_generated
+.classpath
+.factorypath
+.externalToolBuilders
+.project
+.settings
+.springBeans
+.eclipse-pmd
+/.temp-*
+bin
+
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
