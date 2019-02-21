@@ -1,7 +1,6 @@
 package io.florianlopes.spring.test.web.servlet.request;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
+import static io.florianlopes.spring.test.web.servlet.request.MockMvcRequestBuilderUtils.form;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -15,12 +14,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Created by flopes on 15/04/2018.
@@ -36,31 +37,39 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
         this.mockMvc = MockMvcBuilders.standaloneSetup(new UserController())
                 .setValidator(new LocalValidatorFactoryBean())
                 .build();
+
+        MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
     }
 
     @Test
     public void fullTest() throws Exception {
         final AddUserForm addUserForm = getCompletedAddUserForm();
 
-        MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
-        final LocalDate bachelorDate = LocalDate.now().minusYears(2);
-        final LocalDate masterDate = LocalDate.now();
-        addUserForm.setDiplomas(Arrays.asList(new AddUserForm.Diploma("License", bachelorDate), new AddUserForm.Diploma("MSC", masterDate)));
-
         this.mockMvc.perform(MockMvcRequestBuilderUtils.postForm("/users", addUserForm))
                 .andExpect(MockMvcResultMatchers.model().hasNoErrors());
     }
     
     @Test
-    public void withParamsFullTest() throws Exception {
+    public void withParamsFullTestGetMethod() throws Exception {
         final AddUserForm addUserForm = getCompletedAddUserForm();
         
-        MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
-        final LocalDate bachelorDate = LocalDate.now().minusYears(2);
-        final LocalDate masterDate = LocalDate.now();
-        addUserForm.setDiplomas(Arrays.asList(new AddUserForm.Diploma("License", bachelorDate), new AddUserForm.Diploma("MSC", masterDate)));
-        
-        this.mockMvc.perform(post("/users").with(MockMvcRequestBuilderUtils.formParams(addUserForm)))
+        this.mockMvc.perform(get("/users").with(form(addUserForm)))
+                .andExpect(MockMvcResultMatchers.model().hasNoErrors());
+    }
+
+    @Test
+    public void withParamsFullTestPutMethod() throws Exception {
+        final AddUserForm addUserForm = getCompletedAddUserForm();
+
+        this.mockMvc.perform(put("/users").with(form(addUserForm)))
+                .andExpect(MockMvcResultMatchers.model().hasNoErrors());
+    }
+
+    @Test
+    public void withParamsFullTestPostMethod() throws Exception {
+        final AddUserForm addUserForm = getCompletedAddUserForm();
+
+        this.mockMvc.perform(post("/users").with(form(addUserForm)))
                 .andExpect(MockMvcResultMatchers.model().hasNoErrors());
     }
 
@@ -96,7 +105,7 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
     @Controller
     private class UserController {
 
-        @RequestMapping(value = "/users", method = RequestMethod.POST)
+        @RequestMapping(value = "/users")
         public String addUser(@Valid AddUserForm addUserForm, BindingResult bindingResult) {
             return StringUtils.EMPTY;
         }

@@ -39,7 +39,7 @@ public class MockMvcRequestBuilderUtilsTests {
     @Test
     public void withParamsNullForm() {
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
-                .with(MockMvcRequestBuilderUtils.formParams(null));
+                .with(MockMvcRequestBuilderUtils.form(null));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
@@ -49,7 +49,7 @@ public class MockMvcRequestBuilderUtilsTests {
     @Test
     public void withParamsNullAndEmptyFields() {
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
-                .with(MockMvcRequestBuilderUtils.formParams(new AddUserForm("", "", null, null)));
+                .with(MockMvcRequestBuilderUtils.form(new AddUserForm("", "", null, null)));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
@@ -67,7 +67,7 @@ public class MockMvcRequestBuilderUtilsTests {
                 .build();
         
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
-                .with(MockMvcRequestBuilderUtils.formParams(addUserForm));
+                .with(MockMvcRequestBuilderUtils.form(addUserForm));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
@@ -82,7 +82,7 @@ public class MockMvcRequestBuilderUtilsTests {
                 .build();
         
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
-                .with(MockMvcRequestBuilderUtils.formParams(addUserForm));
+                .with(MockMvcRequestBuilderUtils.form(addUserForm));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
@@ -91,7 +91,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void withParamsComplextCollection() {
+    public void withParamsComplexCollection() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe").build();
         MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
         final LocalDate bachelorDate = LocalDate.now().minusYears(2);
@@ -99,7 +99,7 @@ public class MockMvcRequestBuilderUtilsTests {
         addUserForm.setDiplomas(Arrays.asList(new AddUserForm.Diploma("License", bachelorDate), new AddUserForm.Diploma("MSC", masterDate)));
      
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
-                .with(MockMvcRequestBuilderUtils.formParams(addUserForm));
+                .with(MockMvcRequestBuilderUtils.form(addUserForm));
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
         
@@ -115,7 +115,7 @@ public class MockMvcRequestBuilderUtilsTests {
                 .usernamesArray(new String[]{"john.doe", "jdoe"})
                 .build();
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
-                .with(MockMvcRequestBuilderUtils.formParams(addUserForm));
+                .with(MockMvcRequestBuilderUtils.form(addUserForm));
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
@@ -133,7 +133,7 @@ public class MockMvcRequestBuilderUtilsTests {
                 })
                 .build();
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
-                .with(MockMvcRequestBuilderUtils.formParams(addUserForm));
+                .with(MockMvcRequestBuilderUtils.form(addUserForm));
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
@@ -147,7 +147,7 @@ public class MockMvcRequestBuilderUtilsTests {
                 .firstName("John").name("Doe").gender(AddUserForm.Gender.MALE)
                 .build();
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
-                .with(MockMvcRequestBuilderUtils.formParams(addUserForm));
+                .with(MockMvcRequestBuilderUtils.form(addUserForm));
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
@@ -164,7 +164,7 @@ public class MockMvcRequestBuilderUtilsTests {
                 .metadatas(metadatas)
                 .build();
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
-                .with(MockMvcRequestBuilderUtils.formParams(addUserForm));
+                .with(MockMvcRequestBuilderUtils.form(addUserForm));
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
@@ -179,7 +179,7 @@ public class MockMvcRequestBuilderUtilsTests {
                 .identificationNumber(BigDecimal.TEN)
                 .build();
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
-                .with(MockMvcRequestBuilderUtils.formParams(addUserForm));
+                .with(MockMvcRequestBuilderUtils.form(addUserForm));
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
@@ -192,7 +192,7 @@ public class MockMvcRequestBuilderUtilsTests {
                 .identificationNumberBigInt(BigInteger.TEN)
                 .build();
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
-                .with(MockMvcRequestBuilderUtils.formParams(addUserForm));
+                .with(MockMvcRequestBuilderUtils.form(addUserForm));
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
@@ -212,7 +212,7 @@ public class MockMvcRequestBuilderUtilsTests {
 
             final AddUserForm build = AddUserForm.builder().identificationNumberBigInt(BigInteger.TEN).build();
             MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
-                    .with(MockMvcRequestBuilderUtils.formParams(build));
+                    .with(MockMvcRequestBuilderUtils.form(build));
             MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
             mockHttpServletRequestBuilder.postProcessRequest(request);
             

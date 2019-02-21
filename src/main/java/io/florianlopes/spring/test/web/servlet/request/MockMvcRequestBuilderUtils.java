@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.logging.Log;
@@ -19,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.PropertyEditorRegistrySupport;
 import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -52,6 +52,10 @@ public class MockMvcRequestBuilderUtils {
         propertyEditorRegistry.registerCustomEditor(type, propertyEditor);
     }
 
+    public static FormRequestPostProcessor form(Object form) {
+        return new FormRequestPostProcessor(form);
+    }
+
     /**
      * Post a form to the given url.
      * All non-null form fields will be added as HTTP request parameters using POST method
@@ -78,24 +82,6 @@ public class MockMvcRequestBuilderUtils {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.put(url)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
         return buildFormFields(form, mockHttpServletRequestBuilder);
-    }
-
-    /**
-     * Implementation of {@link RequestPostProcessor} that adds form parameters to the request before execution.
-     * 
-     * @param form form object to add to the request as parameters
-     * @return RequestPostProcessor
-     */
-    public static RequestPostProcessor formParams(Object form) {
-        final Map<String, String> formFields = getFormFields(form, new TreeMap<>(), StringUtils.EMPTY);
-        return request -> {
-            formFields.forEach((path, value) -> {
-                logger.debug(String.format("Adding form field (%s=%s) to HTTP request parameters", path, value));
-                request.addParameter(path, value);
-            });
-            
-            return request;
-        };
     }
 
     private static MockHttpServletRequestBuilder buildFormFields(Object form, MockHttpServletRequestBuilder mockHttpServletRequestBuilder) {
@@ -238,5 +224,27 @@ public class MockMvcRequestBuilderUtils {
 
     private static boolean isMap(Class<?> type) {
         return Map.class.isAssignableFrom(type);
+    }
+
+    /**
+     * Implementation of {@link RequestPostProcessor} that adds form parameters to the request before execution.
+     */
+    public static class FormRequestPostProcessor implements RequestPostProcessor {
+
+        private final Object form;
+
+        private FormRequestPostProcessor(Object form) {
+            this.form = form;
+        }
+
+        @Override
+        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+            final Map<String, String> formFields = getFormFields(form, new TreeMap<>(), StringUtils.EMPTY);
+            formFields.forEach((path, value) -> {
+                logger.debug(String.format("Adding form field (%s=%s) to HTTP request parameters", path, value));
+                request.addParameter(path, value);
+            });
+            return request;
+        }
     }
 }
