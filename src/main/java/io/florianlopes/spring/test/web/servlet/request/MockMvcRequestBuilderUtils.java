@@ -18,9 +18,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.PropertyEditorRegistrySupport;
 import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -48,6 +50,10 @@ public class MockMvcRequestBuilderUtils {
      */
     public static void registerPropertyEditor(Class type, PropertyEditor propertyEditor) {
         propertyEditorRegistry.registerCustomEditor(type, propertyEditor);
+    }
+
+    public static FormRequestPostProcessor form(Object form) {
+        return new FormRequestPostProcessor(form);
     }
 
     /**
@@ -218,5 +224,27 @@ public class MockMvcRequestBuilderUtils {
 
     private static boolean isMap(Class<?> type) {
         return Map.class.isAssignableFrom(type);
+    }
+
+    /**
+     * Implementation of {@link RequestPostProcessor} that adds form parameters to the request before execution.
+     */
+    public static class FormRequestPostProcessor implements RequestPostProcessor {
+
+        private final Object form;
+
+        private FormRequestPostProcessor(Object form) {
+            this.form = form;
+        }
+
+        @Override
+        public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+            final Map<String, String> formFields = getFormFields(form, new TreeMap<>(), StringUtils.EMPTY);
+            formFields.forEach((path, value) -> {
+                logger.debug(String.format("Adding form field (%s=%s) to HTTP request parameters", path, value));
+                request.addParameter(path, value);
+            });
+            return request;
+        }
     }
 }
