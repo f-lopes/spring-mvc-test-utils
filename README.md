@@ -41,10 +41,28 @@ public void testSimpleFields() throws Exception {
 
 Usage with MockMvc:
 ```
-mockMvc.perform(MockMvcRequestBuilderUtils.postForm("/users", new AddUserForm("John", "Doe", null, null)))
-        .andExpect(MockMvcResultMatchers.status().isFound())
-        .andExpect(MockMvcResultMatchers.redirectedUrl("/users"))
-        .andExpect(MockMvcResultMatchers.flash().attribute("message", "success"));
+final AddUserForm addUserForm = new AddUserForm("John", "Doe", null, new Address(1, "Street", 5222, "New York")));
+
+mockMvc.perform(MockMvcRequestBuilderUtils.postForm("/users", addUserForm))
+		.andExpect(MockMvcResultMatchers.model().hasNoErrors());
+```
+
+Using `with()` syntax (`FormRequestPostProcessor`):
+
+```
+final AddUserForm addUserForm = new AddUserForm("John", "Doe", null, new Address(1, "Street", 5222, "New York")));
+
+// POST
+mockMvc.perform(post("/users").with(MockMvcRequestBuilderUtils.form(addUserForm)))
+		.andExpect(MockMvcResultMatchers.model().hasNoErrors());
+
+// GET
+mockMvc.perform(get("/users").with(MockMvcRequestBuilderUtils.form(addUserForm)))
+		.andExpect(MockMvcResultMatchers.model().hasNoErrors());
+		
+// PUT
+mockMvc.perform(put("/users").with(MockMvcRequestBuilderUtils.form(addUserForm)))
+		.andExpect(MockMvcResultMatchers.model().hasNoErrors());
 ```
 
 ### Register property editor(s)
