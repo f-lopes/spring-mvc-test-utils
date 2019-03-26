@@ -6,11 +6,11 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.logging.Log;
@@ -95,7 +95,7 @@ public class MockMvcRequestBuilderUtils {
     }
 
     private static Map<String, String> getFormFields(Object form, Map<String, String> formFields, String path) {
-        final List<Field> fields = form != null ? Arrays.asList(FieldUtils.getAllFields(form.getClass())) : new ArrayList<>();
+        final List<Field> fields = form != null ? getAllNonSyntheticFields(form) : new ArrayList<>();
         for (Field field : fields) {
             final Class<?> fieldType = field.getType();
             final Object fieldValue = getFieldValue(form, field);
@@ -132,6 +132,14 @@ public class MockMvcRequestBuilderUtils {
             }
         }
         return formFields;
+    }
+
+    private static List<Field> getAllNonSyntheticFields(Object form) {
+        return FieldUtils.getAllFieldsList(form.getClass())
+                .stream()
+                // Only retrieve non synthetic fields to ignore JaCoCo's ones (https://github.com/f-lopes/spring-mvc-test-utils/issues/10)
+                .filter(field -> !field.isSynthetic())
+                .collect(Collectors.toList());
     }
 
     private static Map<?, ?> getMap(Object fieldValue, Class<?> type) {

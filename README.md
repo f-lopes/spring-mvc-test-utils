@@ -1,7 +1,7 @@
 # Spring MVC Test utils
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1e521e339dc446328b7ccc52faaa7648)](https://www.codacy.com/app/f-lopes/spring-mvc-test-utils?utm_source=github.com&utm_medium=referral&utm_content=f-lopes/spring-mvc-test-utils&utm_campaign=badger)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.florianlopes/spring-mvc-test-utils/badge.svg)](https://search.maven.org/#artifactdetails%7Cio.florianlopes%7Cspring-mvc-test-utils%7C2.2.0%7Cjar)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.florianlopes/spring-mvc-test-utils/badge.svg)](https://search.maven.org/#artifactdetails%7Cio.florianlopes%7Cspring-mvc-test-utils%7C2.2.1%7Cjar)
 [![CircleCI](https://circleci.com/gh/f-lopes/spring-mvc-test-utils/tree/master.svg?style=svg&circle-token=b34b191c4f183c701aee405ba6dca66c9f277d49)](https://circleci.com/gh/f-lopes/spring-mvc-test-utils/tree/master)
 [![codecov](https://codecov.io/gh/f-lopes/spring-mvc-test-utils/branch/master/graph/badge.svg?token=2yY70RB1tw)](https://codecov.io/gh/f-lopes/spring-mvc-test-utils)
 [![Dependency Status](https://www.versioneye.com/user/projects/57e036e36dfcd0003e7f55c3/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57e036e36dfcd0003e7f55c3)
@@ -19,7 +19,7 @@ Add this dependency to your pom.xml file:
 <dependency>
     <groupId>io.florianlopes</groupId>
     <artifactId>spring-mvc-test-utils</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.1</version>
     <scope>test</scope>
 </dependency>
 ```
