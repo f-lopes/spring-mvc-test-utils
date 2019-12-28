@@ -5,6 +5,7 @@
 [![CircleCI](https://circleci.com/gh/f-lopes/spring-mvc-test-utils/tree/master.svg?style=svg&circle-token=b34b191c4f183c701aee405ba6dca66c9f277d49)](https://circleci.com/gh/f-lopes/spring-mvc-test-utils/tree/master)
 [![codecov](https://codecov.io/gh/f-lopes/spring-mvc-test-utils/branch/master/graph/badge.svg?token=2yY70RB1tw)](https://codecov.io/gh/f-lopes/spring-mvc-test-utils)
 [![Dependency Status](https://www.versioneye.com/user/projects/57e036e36dfcd0003e7f55c3/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57e036e36dfcd0003e7f55c3)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=f-lopes/spring-mvc-test-utils)](https://dependabot.com)
 
 Test library aimed to ease Spring MVC form validation tests. Easily post an entire form to a given url.
 
