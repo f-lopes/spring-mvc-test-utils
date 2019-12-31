@@ -1,10 +1,11 @@
 # Spring MVC Test utils
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1e521e339dc446328b7ccc52faaa7648)](https://www.codacy.com/app/f-lopes/spring-mvc-test-utils?utm_source=github.com&utm_medium=referral&utm_content=f-lopes/spring-mvc-test-utils&utm_campaign=badger)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.florianlopes/spring-mvc-test-utils/badge.svg)](https://search.maven.org/#artifactdetails%7Cio.florianlopes%7Cspring-mvc-test-utils%7C2.2.1%7Cjar)
-[![CircleCI](https://circleci.com/gh/f-lopes/spring-mvc-test-utils/tree/master.svg?style=svg&circle-token=b34b191c4f183c701aee405ba6dca66c9f277d49)](https://circleci.com/gh/f-lopes/spring-mvc-test-utils/tree/master)
+[![Build Status](https://travis-ci.org/f-lopes/spring-mvc-test-utils.svg?branch=develop)](https://travis-ci.org/f-lopes/spring-mvc-test-utils)
 [![codecov](https://codecov.io/gh/f-lopes/spring-mvc-test-utils/branch/master/graph/badge.svg?token=2yY70RB1tw)](https://codecov.io/gh/f-lopes/spring-mvc-test-utils)
-[![Dependency Status](https://www.versioneye.com/user/projects/57e036e36dfcd0003e7f55c3/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57e036e36dfcd0003e7f55c3)
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1e521e339dc446328b7ccc52faaa7648)](https://www.codacy.com/app/f-lopes/spring-mvc-test-utils?utm_source=github.com&utm_medium=referral&utm_content=f-lopes/spring-mvc-test-utils&utm_campaign=badger)
+[![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/f-lopes/spring-mvc-test-utils.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/f-lopes/spring-mvc-test-utils/context:java)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=f-lopes/spring-mvc-test-utils)](https://dependabot.com)
 
 Test library aimed to ease Spring MVC form validation tests. Easily post an entire form to a given url.
