@@ -13,8 +13,8 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.PropertyEditorRegistrySupport;
 import org.springframework.beans.SimpleTypeConverter;
 import org.springframework.http.MediaType;
@@ -35,9 +35,9 @@ import org.springframework.util.CollectionUtils;
  */
 public class MockMvcRequestBuilderUtils {
 
-    private static final PropertyEditorRegistrySupport propertyEditorRegistry = new SimpleTypeConverter();
+    private static final PropertyEditorRegistrySupport PROPERTY_EDITOR_REGISTRY = new SimpleTypeConverter();
 
-    private static final Log logger = LogFactory.getLog(MockMvcRequestBuilderUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MockMvcRequestBuilderUtils.class);
 
     private MockMvcRequestBuilderUtils() {
     }
@@ -49,7 +49,7 @@ public class MockMvcRequestBuilderUtils {
      * @param propertyEditor {@link PropertyEditor} to register
      */
     public static void registerPropertyEditor(Class type, PropertyEditor propertyEditor) {
-        propertyEditorRegistry.registerCustomEditor(type, propertyEditor);
+        PROPERTY_EDITOR_REGISTRY.registerCustomEditor(type, propertyEditor);
     }
 
     public static FormRequestPostProcessor form(Object form) {
@@ -87,7 +87,7 @@ public class MockMvcRequestBuilderUtils {
     private static MockHttpServletRequestBuilder buildFormFields(Object form, MockHttpServletRequestBuilder mockHttpServletRequestBuilder) {
         final Map<String, String> formFields = getFormFields(form, new TreeMap<>(), StringUtils.EMPTY);
         formFields.forEach((path, value) -> {
-            logger.debug(String.format("Adding form field (%s=%s) to HTTP request parameters", path, value));
+            LOGGER.debug("Adding form field ({}={}) to HTTP request parameters", path, value);
             mockHttpServletRequestBuilder.param(path, value);
         });
 
@@ -190,14 +190,14 @@ public class MockMvcRequestBuilderUtils {
     }
 
     private static boolean hasPropertyEditorFor(Class<?> type) {
-        return propertyEditorRegistry.hasCustomEditorForElement(type, null) ||
-                propertyEditorRegistry.getDefaultEditor(type) != null;
+        return PROPERTY_EDITOR_REGISTRY.hasCustomEditorForElement(type, null) ||
+                PROPERTY_EDITOR_REGISTRY.getDefaultEditor(type) != null;
     }
 
     private static PropertyEditor getPropertyEditorFor(Object object) {
-        return propertyEditorRegistry.hasCustomEditorForElement(object.getClass(), null) ?
-                propertyEditorRegistry.findCustomEditor(object.getClass(), null) :
-                propertyEditorRegistry.getDefaultEditor(object.getClass());
+        return PROPERTY_EDITOR_REGISTRY.hasCustomEditorForElement(object.getClass(), null) ?
+                PROPERTY_EDITOR_REGISTRY.findCustomEditor(object.getClass(), null) :
+                PROPERTY_EDITOR_REGISTRY.getDefaultEditor(object.getClass());
     }
 
     private static boolean isComplexField(Field field) {
@@ -249,7 +249,7 @@ public class MockMvcRequestBuilderUtils {
         public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
             final Map<String, String> formFields = getFormFields(form, new TreeMap<>(), StringUtils.EMPTY);
             formFields.forEach((path, value) -> {
-                logger.debug(String.format("Adding form field (%s=%s) to HTTP request parameters", path, value));
+                LOGGER.debug("Adding form field ({}={}) to HTTP request parameters", path, value);
                 request.addParameter(path, value);
             });
             return request;
