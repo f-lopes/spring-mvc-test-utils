@@ -10,16 +10,15 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletContext;
 import org.apache.commons.lang3.StringUtils;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 /**
  * @author Florian Lopes
@@ -31,7 +30,7 @@ public class MockMvcRequestBuilderUtilsTests {
 
     private ServletContext servletContext;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.servletContext = new MockServletContext();
     }

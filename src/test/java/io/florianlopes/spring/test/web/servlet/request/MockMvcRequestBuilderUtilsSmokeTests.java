@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,7 +32,7 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
 
     private MockMvc mockMvc;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.mockMvc = MockMvcBuilders.standaloneSetup(new UserController())
                 .setValidator(new LocalValidatorFactoryBean())
@@ -103,7 +103,7 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
     }
 
     @Controller
-    private class UserController {
+    private static class UserController {
 
         @RequestMapping(value = "/users")
         public String addUser(@Valid AddUserForm addUserForm, BindingResult bindingResult) {

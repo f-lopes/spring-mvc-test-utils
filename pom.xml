@@ -25,7 +25,6 @@
         <java.version>1.8</java.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <spring-test.version>5.2.2.RELEASE</spring-test.version>
-        <junit.version>4.12</junit.version>
         <lombok.version>1.18.10</lombok.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <spring-webmvc.version>5.2.2.RELEASE</spring-webmvc.version>
@@ -45,6 +44,7 @@
 		<hibernate-validator.version>6.1.0.Final</hibernate-validator.version>
 		<findbugs-maven-plugin.version>3.0.5</findbugs-maven-plugin.version>
 		<slf4j-api.version>1.7.30</slf4j-api.version>
+		<junit-jupiter.version>5.5.2</junit-jupiter.version>
 	</properties>
 
     <dependencies>
@@ -78,12 +78,12 @@
 		</dependency>
 
         <!-- Test dependencies -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>${junit-jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
