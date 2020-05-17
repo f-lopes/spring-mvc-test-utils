@@ -1,0 +1,23 @@
+version: 2
+orbs:
+  codecov: codecov/codecov@1.0.2
+jobs:
+  build:
+    working_directory: ~/spring-mvc-test-utils
+    docker:
+      - image: circleci/openjdk:8-jdk-stretch
+
+    steps:
+      - checkout
+      - restore_cache:
+          key: spring-mvc-test-utils-{{ checksum "pom.xml" }}
+      - run: mvn dependency:go-offline
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: spring-mvc-test-utils-{{ checksum "pom.xml" }}
+      - run: mvn verify
+      - store_test_results:
+          path: target/surefire-reports
+      - codecov/upload:
+          file: {{ coverage_report_filepath }}
