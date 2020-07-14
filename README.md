@@ -1,3 +1,5 @@
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/f-lopes/spring-mvc-test-utils)
+
 # Spring MVC Test utils
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.florianlopes/spring-mvc-test-utils/badge.svg)](https://search.maven.org/#artifactdetails%7Cio.florianlopes%7Cspring-mvc-test-utils%7C2.2.1%7Cjar)
