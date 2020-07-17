@@ -2,3 +2,12 @@ image: gitpod/workspace-full
 
 tasks:
   - init: mvn install -DskipTests=false
+
+vscode:
+  extensions:
+    - cool2k.vscode-lombok@1.0.2:e816/wZO588Jp8PN58Wj6g==
+
+github:
+  prebuilds:
+    addBadge: true
+    addComment: true
