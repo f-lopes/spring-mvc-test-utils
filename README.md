@@ -18,7 +18,7 @@ More details here: [blog.florianlopes.io](https://blog.florianlopes.io/tool-for-
 
 ## How to use?
 
-Add this dependency to your pom.xml file:
+Add this dependency to your `pom.xml` file:
 ```
 <dependency>
     <groupId>io.florianlopes</groupId>
@@ -27,6 +27,8 @@ Add this dependency to your pom.xml file:
     <scope>test</scope>
 </dependency>
 ```
+
+**Note:** since version `3.0.0`, `Java 8` is no longer supported, `Java 11` is the minimum supported version.
 
 ```MockMvcRequestBuilderUtils.postForm("/url", formObject);```
 
@@ -43,7 +45,7 @@ public void testSimpleFields() throws Exception {
 }
 ```
 
-Usage with MockMvc:
+Usage with `MockMvc`:
 ```
 final AddUserForm addUserForm = new AddUserForm("John", "Doe", null, new Address(1, "Street", 5222, "New York")));
 
