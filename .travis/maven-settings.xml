@@ -12,7 +12,6 @@
 			<properties>
 				<gpg.executable>${env.GPG_EXECUTABLE}</gpg.executable>
 				<gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
-				<gpg.useagent>true</gpg.useagent>
 			</properties>
 		</profile>
 	</profiles>
