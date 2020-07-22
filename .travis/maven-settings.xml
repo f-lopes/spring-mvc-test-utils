@@ -1,16 +1,14 @@
 <settings>
+	<servers>
+		<server>
+			<id>ossrh</id>
+			<username>${env.OSSRH_USERNAME}</username>
+			<password>${env.OSSRH_PASSWORD}</password>
+		</server>
+	</servers>
 	<profiles>
 		<profile>
 			<id>ossrh</id>
-			<settings>
-				<servers>
-					<server>
-						<id>ossrh</id>
-						<username>${env.OSSRH_USERNAME}</username>
-						<password>${env.OSSRH_PASSWORD}</password>
-					</server>
-				</servers>
-			</settings>
 			<properties>
 				<gpg.executable>${env.GPG_EXECUTABLE}</gpg.executable>
 				<gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
