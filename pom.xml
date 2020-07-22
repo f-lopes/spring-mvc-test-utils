@@ -263,11 +263,11 @@
 									<goal>sign</goal>
 								</goals>
 								<configuration>
+									<executable></executable>
 									<gpgArguments>
 										<arg>--pinentry-mode</arg>
 										<arg>loopback</arg>
 									</gpgArguments>
-									<keyname>${gpg.keyname}</keyname>
 								</configuration>
 							</execution>
 						</executions>
