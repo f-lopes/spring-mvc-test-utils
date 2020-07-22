@@ -1,6 +1,31 @@
 language: java
+
 jdk:
   - openjdk8
   - openjdk9
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+
+before_deploy:
+  - export PROJECT_VERSION=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
+  - echo $GPG_SECRET_KEY | base64 --decode | $GPG_EXECUTABLE --import
+  - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
+
+deploy:
+  - provider: script
+    script: mvn deploy -B -Pdeploy,ossrh -DskipTests -s .travis/maven-settings.xml
+    on:
+      tags: true
+  - provider: releases
+    name: v${PROJECT_VERSION}
+    api_key:
+      secure: DCeIgvGXy58vMCnb0EgazpRoR9nAJYLdvjncscmsKZHwJffdMmNzvAxsqg399u1idisy9keu+ppMCibR4hVr0DnRURct7T822nXriqUznL+fYMMgX/y7e8FtPQ8XkCQG0d5rHI+wEn0+zIBmIc0W2TySU5/M12HFwxpAqa6YJ0PP09aYU76wPD4XQ6Wk+3HW4BnYJyM5481ObP/1pu7C39xWZ9FoiQQGvD02fzx7XvWxAflaubCaGR+PYPPKgylAq/xr/ExsHrKPoouoIxC8l+DCTcSWUop/wJIyXu7N7qiqQh2ezAkE4kNSdvzb7B/UTqCqNJBik1g8sJzsGj9vv1wXf3ctJE83Rmx3A7NBSyTCnfBgT1V2jGLE9bMNLX796H/1ema3qi7xHrCXTuXninDgP9sP0xyl7s/CgqEcan8rSs3ZEKTMfYD+nO/6NYtASEtaCUtWK2mospOuKDiRSdkARYiWoe+qqpQ5uBygCitaGztWyJ6BJ3EDdpiceukpOM6WmPm2hhllGj75lAfG4DyXdZ3DIWkgjq/6fWntRvKl2czaQdW8dmZQeQPtY5ybdAvAJ8gf3zwQjy1Gc9n8XhWJ1Ee7dBDSSLwFp+mAya+tnk3xLMW5u6bxUHFss8OoJkDxa1UaN898BtmJYN1rhHmIvGJbXTcRjMCdHocm7E0=
+    file: target/spring-mvc-test-utils-${PROJECT_VERSION}.jar
+    skip_cleanup: true
+    on:
+      tags: true
+
+cache:
+  directories:
+    - ~/.m2/repository
