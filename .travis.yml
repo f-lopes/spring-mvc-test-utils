@@ -14,6 +14,7 @@ before_deploy:
 deploy:
   - provider: script
     script: mvn deploy -s .travis/maven-settings.xml -B -Pdeploy -DskipTests
+    skip_cleanup: true
     on:
       tags: true
   - provider: releases
