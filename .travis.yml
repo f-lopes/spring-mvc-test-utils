@@ -9,7 +9,7 @@ after_success:
 
 before_deploy:
   - export PROJECT_VERSION=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
-  - openssl aes-256-cbc -K $encrypted_9ecd600e7191_key -iv $encrypted_9ecd600e7191_iv -in gpg-key.pgp.enc -out gpg-key.pgp -d
+  - openssl aes-256-cbc -K $encrypted_9ecd600e7191_key -iv $encrypted_9ecd600e7191_iv -in .travis/gpg-key.pgp.enc -out .travis/gpg-key.pgp -d
   - $GPG_EXECUTABLE --fast-import .travis/gpg-key.pgp
 
 deploy:
