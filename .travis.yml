@@ -14,7 +14,7 @@ before_deploy:
 
 deploy:
   - provider: script
-    script: mvn deploy -B -Pdeploy,ossrh -DskipTests -s .travis/maven-settings.xml
+    script: mvn deploy -s .travis/maven-settings.xml -B -Pdeploy -DskipTests
     on:
       tags: true
   - provider: releases
