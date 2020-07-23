@@ -273,6 +273,11 @@
 					</plugin>
 				</plugins>
 			</build>
+			<properties>
+				<findbugs.skip>true</findbugs.skip>
+				<pmd.skip>true</pmd.skip>
+				<skipTests>true</skipTests>
+			</properties>
 		</profile>
 	</profiles>
 
