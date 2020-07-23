@@ -15,7 +15,7 @@ before_deploy:
 
 deploy:
   - provider: script
-    script: mvn clean deploy -s .travis/maven-settings.xml -B -Pdeploy
+    script: mvn clean deploy -s .travis/maven-settings.xml -B -Prelease
     on:
       tags: true
   - provider: releases

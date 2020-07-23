@@ -16,6 +16,7 @@
 				<gpg.executable>${env.GPG_EXECUTABLE}</gpg.executable>
 				<gpg.keyname>${env.GPG_KEY_NAME}</gpg.keyname>
 				<gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
+				<stagingProfileId>${env.STAGING_PROFILE_ID}</stagingProfileId>
 			</properties>
 		</profile>
 	</profiles>
