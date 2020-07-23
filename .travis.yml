@@ -9,8 +9,8 @@ after_success:
 
 before_deploy:
   - export PROJECT_VERSION=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
-  - echo $GPG_SECRET_KEY | base64 --decode | $GPG_EXECUTABLE --import --no-tty --batch
-  - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
+  - openssl aes-256-cbc -K $encrypted_9ecd600e7191_key -iv $encrypted_9ecd600e7191_iv -in gpg-key.pgp.enc -out gpg-key.pgp -d
+  - $GPG_EXECUTABLE --fast-import .travis/gpg-key.pgp
 
 deploy:
   - provider: script
