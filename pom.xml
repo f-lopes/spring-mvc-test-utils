@@ -28,7 +28,7 @@
         <lombok.version>1.18.12</lombok.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <spring-webmvc.version>5.2.3.RELEASE</spring-webmvc.version>
-        <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
