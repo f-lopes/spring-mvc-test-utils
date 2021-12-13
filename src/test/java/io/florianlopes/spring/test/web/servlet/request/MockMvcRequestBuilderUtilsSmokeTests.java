@@ -19,7 +19,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -53,17 +52,23 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
         this.mockMvc.perform(MockMvcRequestBuilderUtils.postForm("/users", addUserForm))
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name("users.html"))
-                .andExpect(model().attribute("name", addUserForm.getName()));
+                .andExpect(model().attribute("firstName", addUserForm.getFirstName()))
+                .andExpect(model().attribute("name", addUserForm.getName()))
+                .andExpect(model().attribute("myInt", addUserForm.getMyInt()));
 
         this.mockMvc.perform(MockMvcRequestBuilderUtils.postForm("/users/create", addUserForm))
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name("create-user.html"))
-                .andExpect(model().attribute("name", addUserForm.getName()));
+                .andExpect(model().attribute("firstName", addUserForm.getFirstName()))
+                .andExpect(model().attribute("name", addUserForm.getName()))
+                .andExpect(model().attribute("myInt", addUserForm.getMyInt()));
 
         this.mockMvc.perform(MockMvcRequestBuilderUtils.putForm("/users/edit", addUserForm))
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name("edit-user.html"))
-                .andExpect(model().attribute("name", addUserForm.getName()));
+                .andExpect(model().attribute("firstName", addUserForm.getFirstName()))
+                .andExpect(model().attribute("name", addUserForm.getName()))
+                .andExpect(model().attribute("myInt", addUserForm.getMyInt()));
     }
     
     @Test
@@ -73,7 +78,9 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
         this.mockMvc.perform(get("/users").with(form(addUserForm)))
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name("users.html"))
-                .andExpect(model().attribute("name", addUserForm.getName()));
+                .andExpect(model().attribute("firstName", addUserForm.getFirstName()))
+                .andExpect(model().attribute("name", addUserForm.getName()))
+                .andExpect(model().attribute("myInt", addUserForm.getMyInt()));
     }
 
     @Test
@@ -83,7 +90,9 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
         this.mockMvc.perform(put("/users").with(form(addUserForm)))
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name("users.html"))
-                .andExpect(model().attribute("name", addUserForm.getName()));
+                .andExpect(model().attribute("firstName", addUserForm.getFirstName()))
+                .andExpect(model().attribute("name", addUserForm.getName()))
+                .andExpect(model().attribute("myInt", addUserForm.getMyInt()));
     }
 
     @Test
@@ -93,7 +102,9 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
         this.mockMvc.perform(post("/users").with(form(addUserForm)))
                 .andExpect(model().hasNoErrors())
                 .andExpect(view().name("users.html"))
-                .andExpect(model().attribute("name", addUserForm.getName()));
+                .andExpect(model().attribute("firstName", addUserForm.getFirstName()))
+                .andExpect(model().attribute("name", addUserForm.getName()))
+                .andExpect(model().attribute("myInt", addUserForm.getMyInt()));
     }
 
     private AddUserForm getCompletedAddUserForm() {
@@ -109,6 +120,8 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
 
         return AddUserForm.builder()
                 .firstName("John").name("Doe")
+                .myInt(10)
+                .myLong(1_000L)
                 .usernames(Arrays.asList("john.doe", "jdoe"))
                 .usernamesArray(new String[]{"john.doe", "jdoe"})
                 .gender(AddUserForm.Gender.MALE)
@@ -131,17 +144,27 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
 
         @RequestMapping(value = "")
         public ModelAndView addUser(@Valid AddUserForm addUserForm, BindingResult bindingResult) {
-            return new ModelAndView("users.html", Map.of("name", addUserForm.getName()));
+            return new ModelAndView("users.html", mapForm(addUserForm));
         }
 
         @PostMapping("/create")
         public ModelAndView createUser(@Valid AddUserForm addUserForm) {
-            return new ModelAndView("create-user.html", Map.of("name", addUserForm.getName()));
+            return new ModelAndView("create-user.html", mapForm(addUserForm));
         }
 
         @PutMapping("/edit")
         public ModelAndView editUser(@Valid AddUserForm addUserForm) {
-            return new ModelAndView("edit-user.html", Map.of("name", addUserForm.getName()));
+            return new ModelAndView("edit-user.html", mapForm(addUserForm));
+        }
+
+        private Map<String,Object> mapForm(final AddUserForm addUserForm) {
+            return Map.of(
+                    "firstName", addUserForm.getFirstName(),
+                    "name", addUserForm.getName(),
+                    "myInt", addUserForm.getMyInt(),
+                    "myLong", addUserForm.getMyLong(),
+                    "identificationNumber", addUserForm.getIdentificationNumber()
+            );
         }
     }
 }

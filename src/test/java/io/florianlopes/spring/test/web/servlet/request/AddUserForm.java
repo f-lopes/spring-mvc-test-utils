@@ -26,6 +26,10 @@ class AddUserForm {
     private String firstName;
     @NotEmpty
     private String name;
+
+    private Integer myInt;
+
+    private Long myLong;
     @NotNull
     private BigDecimal identificationNumber;
     @NotNull
