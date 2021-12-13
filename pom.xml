@@ -45,6 +45,7 @@
 		<spotbugs-maven-plugin.version>4.5.0.0</spotbugs-maven-plugin.version>
 		<slf4j-api.version>1.7.32</slf4j-api.version>
 		<junit-jupiter.version>5.8.2</junit-jupiter.version>
+		<hamcrest.version>2.2</hamcrest.version>
 	</properties>
 
 	<dependencyManagement>
@@ -92,6 +93,12 @@
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
 			<version>${junit-jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>${hamcrest.version}</version>
 			<scope>test</scope>
 		</dependency>
         <dependency>

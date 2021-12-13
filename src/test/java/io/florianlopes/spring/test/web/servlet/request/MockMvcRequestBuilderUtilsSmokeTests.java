@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Controller;
@@ -17,11 +16,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by flopes on 15/04/2018.
@@ -46,7 +51,19 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
         final AddUserForm addUserForm = getCompletedAddUserForm();
 
         this.mockMvc.perform(MockMvcRequestBuilderUtils.postForm("/users", addUserForm))
-                .andExpect(MockMvcResultMatchers.model().hasNoErrors());
+                .andExpect(model().hasNoErrors())
+                .andExpect(view().name("users.html"))
+                .andExpect(model().attribute("name", addUserForm.getName()));
+
+        this.mockMvc.perform(MockMvcRequestBuilderUtils.postForm("/users/create", addUserForm))
+                .andExpect(model().hasNoErrors())
+                .andExpect(view().name("create-user.html"))
+                .andExpect(model().attribute("name", addUserForm.getName()));
+
+        this.mockMvc.perform(MockMvcRequestBuilderUtils.putForm("/users/edit", addUserForm))
+                .andExpect(model().hasNoErrors())
+                .andExpect(view().name("edit-user.html"))
+                .andExpect(model().attribute("name", addUserForm.getName()));
     }
     
     @Test
@@ -54,7 +71,9 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
         final AddUserForm addUserForm = getCompletedAddUserForm();
         
         this.mockMvc.perform(get("/users").with(form(addUserForm)))
-                .andExpect(MockMvcResultMatchers.model().hasNoErrors());
+                .andExpect(model().hasNoErrors())
+                .andExpect(view().name("users.html"))
+                .andExpect(model().attribute("name", addUserForm.getName()));
     }
 
     @Test
@@ -62,7 +81,9 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
         final AddUserForm addUserForm = getCompletedAddUserForm();
 
         this.mockMvc.perform(put("/users").with(form(addUserForm)))
-                .andExpect(MockMvcResultMatchers.model().hasNoErrors());
+                .andExpect(model().hasNoErrors())
+                .andExpect(view().name("users.html"))
+                .andExpect(model().attribute("name", addUserForm.getName()));
     }
 
     @Test
@@ -70,7 +91,9 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
         final AddUserForm addUserForm = getCompletedAddUserForm();
 
         this.mockMvc.perform(post("/users").with(form(addUserForm)))
-                .andExpect(MockMvcResultMatchers.model().hasNoErrors());
+                .andExpect(model().hasNoErrors())
+                .andExpect(view().name("users.html"))
+                .andExpect(model().attribute("name", addUserForm.getName()));
     }
 
     private AddUserForm getCompletedAddUserForm() {
@@ -103,11 +126,22 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
     }
 
     @Controller
+    @RequestMapping(value = "/users")
     private static class UserController {
 
-        @RequestMapping(value = "/users")
-        public String addUser(@Valid AddUserForm addUserForm, BindingResult bindingResult) {
-            return StringUtils.EMPTY;
+        @RequestMapping(value = "")
+        public ModelAndView addUser(@Valid AddUserForm addUserForm, BindingResult bindingResult) {
+            return new ModelAndView("users.html", Map.of("name", addUserForm.getName()));
+        }
+
+        @PostMapping("/create")
+        public ModelAndView createUser(@Valid AddUserForm addUserForm) {
+            return new ModelAndView("create-user.html", Map.of("name", addUserForm.getName()));
+        }
+
+        @PutMapping("/edit")
+        public ModelAndView editUser(@Valid AddUserForm addUserForm) {
+            return new ModelAndView("edit-user.html", Map.of("name", addUserForm.getName()));
         }
     }
 }
