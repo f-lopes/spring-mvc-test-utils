@@ -43,7 +43,7 @@
 		<javax.el-api.version>3.0.0</javax.el-api.version>
 		<hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
 		<spotbugs-maven-plugin.version>4.5.3.0</spotbugs-maven-plugin.version>
-		<slf4j-api.version>1.7.32</slf4j-api.version>
+		<slf4j-api.version>1.7.35</slf4j-api.version>
 		<junit-jupiter.version>5.8.2</junit-jupiter.version>
 	</properties>
 
