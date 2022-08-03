@@ -2,6 +2,7 @@ package io.florianlopes.spring.test.web.servlet.request;
 
 import java.beans.PropertyEditor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.time.temporal.Temporal;
@@ -9,8 +10,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
@@ -36,6 +40,7 @@ import org.springframework.util.CollectionUtils;
 public class MockMvcRequestBuilderUtils {
 
     private static final PropertyEditorRegistrySupport PROPERTY_EDITOR_REGISTRY = new SimpleTypeConverter();
+    private static final Configuration DEFAULT_CONFIG = Configuration.builder().build();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MockMvcRequestBuilderUtils.class);
 
@@ -53,39 +58,69 @@ public class MockMvcRequestBuilderUtils {
     }
 
     public static FormRequestPostProcessor form(Object form) {
-        return new FormRequestPostProcessor(form);
+        return form(form, DEFAULT_CONFIG);
+    }
+
+    public static FormRequestPostProcessor form(Object form, Configuration config) {
+        return new FormRequestPostProcessor(form, config);
     }
 
     /**
      * Post a form to the given url.
-     * All non-null form fields will be added as HTTP request parameters using POST method
+     * All non-null, non-static, non-final, non-transient form fields will be added as HTTP request parameters using POST method
      *
      * @param url the URL to post the form to
      * @param form form object to send using POST method
      * @return mockHttpServletRequestBuilder wrapped mockHttpServletRequestBuilder
      */
     public static MockHttpServletRequestBuilder postForm(String url, Object form) {
+        return postForm(url, form, DEFAULT_CONFIG);
+    }
+
+    /**
+     * Post a form to the given url.
+     * All non-null, non-static, non-final form fields will be added as HTTP request parameters using POST method
+     *
+     * @param url the URL to post the form to
+     * @param form form object to send using POST method
+     * @param config configuration object
+     * @return mockHttpServletRequestBuilder wrapped mockHttpServletRequestBuilder
+     */
+    public static MockHttpServletRequestBuilder postForm(String url, Object form, Configuration config) {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(url)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED);
-        return buildFormFields(form, mockHttpServletRequestBuilder);
+        return buildFormFields(form, mockHttpServletRequestBuilder, config);
     }
 
     /**
      * Put a form to the given url.
-     * All non-null form fields will be added as HTTP request parameters using PUT method
+     * All non-null, non-static, non-final, non-transient form fields will be added as HTTP request parameters using PUT method
      *
      * @param url the URL to put the form to
      * @param form form object to send using PUT method
      * @return mockHttpServletRequestBuilder wrapped mockHttpServletRequestBuilder
      */
     public static MockHttpServletRequestBuilder putForm(String url, Object form) {
-        final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.put(url)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED);
-        return buildFormFields(form, mockHttpServletRequestBuilder);
+        return putForm(url, form, DEFAULT_CONFIG);
     }
 
-    private static MockHttpServletRequestBuilder buildFormFields(Object form, MockHttpServletRequestBuilder mockHttpServletRequestBuilder) {
-        final Map<String, String> formFields = getFormFields(form, new TreeMap<>(), StringUtils.EMPTY);
+    /**
+     * Put a form to the given url.
+     * All non-null, non-static, non-final form fields will be added as HTTP request parameters using PUT method
+     *
+     * @param url the URL to put the form to
+     * @param form form object to send using PUT method
+     * @param config configuration object
+     * @return mockHttpServletRequestBuilder wrapped mockHttpServletRequestBuilder
+     */
+    public static MockHttpServletRequestBuilder putForm(String url, Object form, Configuration config) {
+        final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.put(url)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED);
+        return buildFormFields(form, mockHttpServletRequestBuilder, config);
+    }
+
+    private static MockHttpServletRequestBuilder buildFormFields(Object form, MockHttpServletRequestBuilder mockHttpServletRequestBuilder, Configuration config) {
+        final Map<String, String> formFields = getFormFields(form, new TreeMap<>(), StringUtils.EMPTY, config);
         formFields.forEach((path, value) -> {
             LOGGER.debug("Adding form field ({}={}) to HTTP request parameters", path, value);
             mockHttpServletRequestBuilder.param(path, value);
@@ -94,8 +129,8 @@ public class MockMvcRequestBuilderUtils {
         return mockHttpServletRequestBuilder;
     }
 
-    private static Map<String, String> getFormFields(Object form, Map<String, String> formFields, String path) {
-        final List<Field> fields = form != null ? getAllNonSyntheticFields(form) : new ArrayList<>();
+    private static Map<String, String> getFormFields(Object form, Map<String, String> formFields, String path, Configuration config) {
+        final List<Field> fields = form != null ? getFormFields(form, config) : new ArrayList<>();
         for (Field field : fields) {
             final Class<?> fieldType = field.getType();
             final Object fieldValue = getFieldValue(form, field);
@@ -107,7 +142,7 @@ public class MockMvcRequestBuilderUtils {
                             int i = 0;
                             for (Object object : iterableObject) {
                                 final String nestedPath = getPositionedField(path, field, i) + ".";
-                                formFields.putAll(getFormFields(object, formFields, nestedPath));
+                                formFields.putAll(getFormFields(object, formFields, nestedPath, config));
                                 i++;
                             }
                         } else {
@@ -126,7 +161,7 @@ public class MockMvcRequestBuilderUtils {
                     } else {
                         // Iterate over object's fields
                         final String nestedPath = getNestedPath(field);
-                        formFields.putAll(getFormFields(ReflectionTestUtils.getField(form, field.getName()), formFields, nestedPath));
+                        formFields.putAll(getFormFields(ReflectionTestUtils.getField(form, field.getName()), formFields, nestedPath, config));
                     }
                 }
             }
@@ -134,11 +169,10 @@ public class MockMvcRequestBuilderUtils {
         return formFields;
     }
 
-    private static List<Field> getAllNonSyntheticFields(Object form) {
+    private static List<Field> getFormFields(Object form, Configuration config) {
         return FieldUtils.getAllFieldsList(form.getClass())
                 .stream()
-                // Only retrieve non synthetic fields to ignore JaCoCo's ones (https://github.com/f-lopes/spring-mvc-test-utils/issues/10)
-                .filter(field -> !field.isSynthetic())
+                .filter(config.fieldPredicate::test)
                 .collect(Collectors.toList());
     }
 
@@ -195,9 +229,8 @@ public class MockMvcRequestBuilderUtils {
     }
 
     private static PropertyEditor getPropertyEditorFor(Object object) {
-        return PROPERTY_EDITOR_REGISTRY.hasCustomEditorForElement(object.getClass(), null) ?
-                PROPERTY_EDITOR_REGISTRY.findCustomEditor(object.getClass(), null) :
-                PROPERTY_EDITOR_REGISTRY.getDefaultEditor(object.getClass());
+        return PROPERTY_EDITOR_REGISTRY.hasCustomEditorForElement(object.getClass(), null) ? PROPERTY_EDITOR_REGISTRY.findCustomEditor(object.getClass(), null)
+                : PROPERTY_EDITOR_REGISTRY.getDefaultEditor(object.getClass());
     }
 
     private static boolean isComplexField(Field field) {
@@ -236,18 +269,22 @@ public class MockMvcRequestBuilderUtils {
 
     /**
      * Implementation of {@link RequestPostProcessor} that adds form parameters to the request before execution.
+     * 
+     * @see MockMvcRequestBuilderUtils#postForm(String, Object) for implementation details
      */
     public static class FormRequestPostProcessor implements RequestPostProcessor {
 
         private final Object form;
+        private final Configuration config;
 
-        private FormRequestPostProcessor(Object form) {
+        private FormRequestPostProcessor(Object form, Configuration config) {
             this.form = form;
+            this.config = config;
         }
 
         @Override
         public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
-            final Map<String, String> formFields = getFormFields(form, new TreeMap<>(), StringUtils.EMPTY);
+            final Map<String, String> formFields = getFormFields(form, new TreeMap<>(), StringUtils.EMPTY, config);
             formFields.forEach((path, value) -> {
                 LOGGER.debug("Adding form field ({}={}) to HTTP request parameters", path, value);
                 request.addParameter(path, value);
@@ -255,4 +292,62 @@ public class MockMvcRequestBuilderUtils {
             return request;
         }
     }
+
+    /**
+     * Configuration class that allows the exclusion of specific fields.
+     */
+    public static class Configuration {
+
+        private final Predicate<Field> fieldPredicate;
+
+        private Configuration(Predicate<Field> fieldPredicate) {
+            this.fieldPredicate = fieldPredicate;
+        }
+
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        public static class Builder {
+
+            private static final Predicate<Field> BASE_PREDICATE = Builder::isNotSyntheticStaticFinal;
+
+            private Predicate<Field> fieldPredicate;
+            private boolean includeTransient = false;
+
+            public Builder fieldPredicate(Predicate<Field> fieldPredicate) {
+                this.fieldPredicate = Objects.requireNonNull(fieldPredicate, "fieldPredicate cannot be null");
+                return this;
+            }
+
+            public Builder includeTransient(boolean includeTransient) {
+                this.includeTransient = includeTransient;
+                return this;
+            }
+
+            public Configuration build() {
+                var fieldPredicate = BASE_PREDICATE;
+                if (this.fieldPredicate != null) {
+                    fieldPredicate = fieldPredicate.and(this.fieldPredicate);
+                }
+
+                if (!this.includeTransient) {
+                    fieldPredicate = fieldPredicate.and(Builder::isNotTransient);
+                }
+
+                return new Configuration(fieldPredicate);
+            }
+
+            private static boolean isNotSyntheticStaticFinal(Field field) {
+                return !field.isSynthetic() && !Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers());
+            }
+
+            private static boolean isNotTransient(Field field) {
+                return !Modifier.isTransient(field.getModifiers());
+            }
+
+        }
+
+    }
+
 }

@@ -1,5 +1,10 @@
 package io.florianlopes.spring.test.web.servlet.request;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import java.beans.PropertyEditorSupport;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -8,17 +13,19 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.ServletContext;
+
 import org.apache.commons.lang3.StringUtils;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
+import io.florianlopes.spring.test.web.servlet.request.MockMvcRequestBuilderUtils.Configuration;
 
 /**
  * @author Florian Lopes
@@ -28,13 +35,16 @@ public class MockMvcRequestBuilderUtilsTests {
     private static final String POST_FORM_URL = "/test";
     private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
 
+    private static final Configuration EXCLUDE_STATIC_TRANSIENT_SYNTHETIC = Configuration.builder().includeTransient(false).build();
+    private static final Configuration INCLUDE_TRANSIENT = Configuration.builder().includeTransient(true).build();
+
     private ServletContext servletContext;
 
     @BeforeEach
     public void setUp() {
         this.servletContext = new MockServletContext();
     }
-    
+
     @Test
     public void withParamsNullForm() {
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
@@ -64,7 +74,7 @@ public class MockMvcRequestBuilderUtilsTests {
                 .firstName("John").name("Doe")
                 .currentAddress(new AddUserForm.Address(1, "Street", 5222, "New York"))
                 .build();
-        
+
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
                 .with(MockMvcRequestBuilderUtils.form(addUserForm));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -79,7 +89,7 @@ public class MockMvcRequestBuilderUtilsTests {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe")
                 .usernames(Arrays.asList("john.doe", "jdoe"))
                 .build();
-        
+
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
                 .with(MockMvcRequestBuilderUtils.form(addUserForm));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -96,22 +106,22 @@ public class MockMvcRequestBuilderUtilsTests {
         final LocalDate bachelorDate = LocalDate.now().minusYears(2);
         final LocalDate masterDate = LocalDate.now();
         addUserForm.setDiplomas(Arrays.asList(new AddUserForm.Diploma("License", bachelorDate), new AddUserForm.Diploma("MSC", masterDate)));
-     
+
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
                 .with(MockMvcRequestBuilderUtils.form(addUserForm));
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
-        
+
         assertEquals("License", request.getParameter("diplomas[0].name"));
         assertEquals(bachelorDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)), request.getParameter("diplomas[0].date"));
         assertEquals("MSC", request.getParameter("diplomas[1].name"));
         assertEquals(masterDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)), request.getParameter("diplomas[1].date"));
     }
-    
+
     @Test
     public void withParamsSimpleArray() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe")
-                .usernamesArray(new String[]{"john.doe", "jdoe"})
+                .usernamesArray(new String[] { "john.doe", "jdoe" })
                 .build();
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
                 .with(MockMvcRequestBuilderUtils.form(addUserForm));
@@ -126,7 +136,7 @@ public class MockMvcRequestBuilderUtilsTests {
     public void withParamsComplexArray() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe")
                 .usernames(Arrays.asList("john.doe", "jdoe"))
-                .formerAddresses(new AddUserForm.Address[]{
+                .formerAddresses(new AddUserForm.Address[] {
                         new AddUserForm.Address(10, "Street", 5222, "Chicago"),
                         new AddUserForm.Address(20, "Street", 5222, "Washington")
                 })
@@ -214,7 +224,7 @@ public class MockMvcRequestBuilderUtilsTests {
                     .with(MockMvcRequestBuilderUtils.form(build));
             MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
             mockHttpServletRequestBuilder.postProcessRequest(request);
-            
+
             assertEquals("textValue", request.getParameter("identificationNumberBigInt"));
         } finally {
             // Restore original property editor
@@ -295,7 +305,7 @@ public class MockMvcRequestBuilderUtilsTests {
     @Test
     public void simpleArray() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe")
-                .usernamesArray(new String[]{"john.doe", "jdoe"})
+                .usernamesArray(new String[] { "john.doe", "jdoe" })
                 .build();
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -308,7 +318,7 @@ public class MockMvcRequestBuilderUtilsTests {
     public void complexArray() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe")
                 .usernames(Arrays.asList("john.doe", "jdoe"))
-                .formerAddresses(new AddUserForm.Address[]{
+                .formerAddresses(new AddUserForm.Address[] {
                         new AddUserForm.Address(10, "Street", 5222, "Chicago"),
                         new AddUserForm.Address(20, "Street", 5222, "Washington")
                 })
@@ -409,4 +419,91 @@ public class MockMvcRequestBuilderUtilsTests {
 
         assertEquals("PUT", request.getMethod());
     }
+
+    @Test
+    public void testSyntheticFieldExcluded() {
+        final ConfigurationForm form = new ConfigurationForm();
+        form.setInner(form.new Inner("inner"));
+
+        final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, EXCLUDE_STATIC_TRANSIENT_SYNTHETIC);
+        final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
+
+        assertEquals(1, request.getParameterMap().size());
+        assertEquals("inner", request.getParameter("inner.value"));
+    }
+
+    @Nested
+    class ConfigurationTest {
+
+        @Test
+        public void testDefaultConfig() {
+            final ConfigurationForm form = new ConfigurationForm();
+            form.setName("name");
+            form.setTransientName("transientName");
+            form.setInner(form.new Inner("inner"));
+
+            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form);
+            final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
+
+            assertEquals(2, request.getParameterMap().size());
+            assertEquals("name", request.getParameter("name"));
+            assertEquals("inner", request.getParameter("inner.value"));
+        }
+
+        @Test
+        public void testExcludeStaticTransientFields() {
+            final ConfigurationForm form = new ConfigurationForm();
+            form.setTransientName("transientName");
+
+            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, EXCLUDE_STATIC_TRANSIENT_SYNTHETIC);
+            final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
+
+            assertTrue(request.getParameterMap().isEmpty());
+        }
+
+        @Test
+        public void testIncludeTransientField() {
+            final ConfigurationForm form = new ConfigurationForm();
+            form.setName("name");
+            form.setTransientName("transientName");
+
+            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, INCLUDE_TRANSIENT);
+            final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
+
+            assertEquals(2, request.getParameterMap().size());
+            assertEquals("name", request.getParameter("name"));
+            assertEquals("transientName", request.getParameter("transientName"));
+        }
+
+        @Test
+        public void testCustomPredicate() {
+            final Configuration config = Configuration.builder().fieldPredicate(field -> "transientName".equals(field.getName())).build();
+
+            final ConfigurationForm form = new ConfigurationForm();
+            form.setName("name");
+            form.setTransientName("transientName");
+
+            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, config);
+            final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
+
+            assertTrue(request.getParameterMap().isEmpty());
+        }
+
+        @Test
+        public void testCustomPredicateWithModifier() {
+            final Configuration config = Configuration.builder().includeTransient(true).fieldPredicate(field -> "transientName".equals(field.getName())).build();
+
+            final ConfigurationForm form = new ConfigurationForm();
+            form.setName("name");
+            form.setTransientName("transientName");
+
+            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, config);
+            final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
+
+            assertEquals(1, request.getParameterMap().size());
+            assertEquals("transientName", request.getParameter("transientName"));
+        }
+
+    }
+
 }
