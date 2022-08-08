@@ -172,7 +172,7 @@ public class MockMvcRequestBuilderUtils {
     private static List<Field> getFormFields(Object form, Configuration config) {
         return FieldUtils.getAllFieldsList(form.getClass())
                 .stream()
-                .filter(config.fieldPredicate::test)
+                .filter(config.fieldPredicate)
                 .collect(Collectors.toList());
     }
 
@@ -304,16 +304,24 @@ public class MockMvcRequestBuilderUtils {
             this.fieldPredicate = fieldPredicate;
         }
 
+        /**
+         * Creates a new builder that excludes transient and static fields by default.
+         */
         public static Builder builder() {
-            return new Builder();
+            return new Builder()
+                    .includeFinal(true)
+                    .includeTransient(false)
+                    .includeStatic(false);
         }
 
         public static class Builder {
 
-            private static final Predicate<Field> BASE_PREDICATE = Builder::isNotSyntheticStaticFinal;
+            private static final Predicate<Field> BASE_PREDICATE = Builder::isNotSynthetic;
 
             private Predicate<Field> fieldPredicate;
+            private boolean includeFinal = true;
             private boolean includeTransient = false;
+            private boolean includeStatic = false;
 
             public Builder fieldPredicate(Predicate<Field> fieldPredicate) {
                 this.fieldPredicate = Objects.requireNonNull(fieldPredicate, "fieldPredicate cannot be null");
@@ -325,25 +333,54 @@ public class MockMvcRequestBuilderUtils {
                 return this;
             }
 
+            public Builder includeFinal(boolean includeFinal) {
+                this.includeFinal = includeFinal;
+                return this;
+            }
+
+            public Builder includeStatic(boolean includeStatic) {
+                this.includeStatic = includeStatic;
+                return this;
+            }
+
             public Configuration build() {
-                var fieldPredicate = BASE_PREDICATE;
-                if (this.fieldPredicate != null) {
-                    fieldPredicate = fieldPredicate.and(this.fieldPredicate);
+                Predicate<Field> fieldPredicate = this.fieldPredicate != null ? BASE_PREDICATE.and(this.fieldPredicate) : BASE_PREDICATE;
+
+                if (!this.includeFinal) {
+                    fieldPredicate = fieldPredicate != null
+                            ? fieldPredicate.and(Builder::isNotFinal)
+                            : Builder::isNotFinal;
                 }
 
                 if (!this.includeTransient) {
-                    fieldPredicate = fieldPredicate.and(Builder::isNotTransient);
+                    fieldPredicate = fieldPredicate != null
+                            ? fieldPredicate.and(Builder::isNotTransient)
+                            : Builder::isNotTransient;
+                }
+
+                if (!this.includeStatic) {
+                    fieldPredicate = fieldPredicate != null
+                            ? fieldPredicate.and(Builder::isNotStatic)
+                            : Builder::isNotStatic;
                 }
 
                 return new Configuration(fieldPredicate);
             }
 
-            private static boolean isNotSyntheticStaticFinal(Field field) {
-                return !field.isSynthetic() && !Modifier.isStatic(field.getModifiers()) && !Modifier.isFinal(field.getModifiers());
+            private static boolean isNotFinal(Field field) {
+                return !Modifier.isFinal(field.getModifiers());
             }
 
             private static boolean isNotTransient(Field field) {
                 return !Modifier.isTransient(field.getModifiers());
+            }
+
+            private static boolean isNotStatic(Field field) {
+                return !Modifier.isStatic(field.getModifiers());
+            }
+
+            private static boolean isNotSynthetic(Field field) {
+                return !field.isSynthetic();
             }
 
         }

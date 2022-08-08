@@ -35,8 +35,9 @@ public class MockMvcRequestBuilderUtilsTests {
     private static final String POST_FORM_URL = "/test";
     private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
 
-    private static final Configuration EXCLUDE_STATIC_TRANSIENT_SYNTHETIC = Configuration.builder().includeTransient(false).build();
-    private static final Configuration INCLUDE_TRANSIENT = Configuration.builder().includeTransient(true).build();
+    private static final Configuration EXCLUDE_FINAL = Configuration.builder().includeFinal(false).includeTransient(true).build();
+    private static final Configuration INCLUDE_TRANSIENT = Configuration.builder().includeFinal(false).includeTransient(true).build();
+    private static final Configuration INCLUDE_STATIC = Configuration.builder().includeFinal(false).includeStatic(true).build();
 
     private ServletContext servletContext;
 
@@ -420,18 +421,6 @@ public class MockMvcRequestBuilderUtilsTests {
         assertEquals("PUT", request.getMethod());
     }
 
-    @Test
-    public void testSyntheticFieldExcluded() {
-        final ConfigurationForm form = new ConfigurationForm();
-        form.setInner(form.new Inner("inner"));
-
-        final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, EXCLUDE_STATIC_TRANSIENT_SYNTHETIC);
-        final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
-
-        assertEquals(1, request.getParameterMap().size());
-        assertEquals("inner", request.getParameter("inner.value"));
-    }
-
     @Nested
     class ConfigurationTest {
 
@@ -445,20 +434,24 @@ public class MockMvcRequestBuilderUtilsTests {
             final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form);
             final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
 
-            assertEquals(2, request.getParameterMap().size());
+            assertEquals(3, request.getParameterMap().size());
             assertEquals("name", request.getParameter("name"));
             assertEquals("inner", request.getParameter("inner.value"));
+            assertEquals("finalValue", request.getParameter("finalName"));
         }
 
         @Test
-        public void testExcludeStaticTransientFields() {
+        public void testExcludeFinalField() {
             final ConfigurationForm form = new ConfigurationForm();
+            form.setName("name");
             form.setTransientName("transientName");
 
-            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, EXCLUDE_STATIC_TRANSIENT_SYNTHETIC);
+            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, EXCLUDE_FINAL);
             final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
 
-            assertTrue(request.getParameterMap().isEmpty());
+            assertEquals(2, request.getParameterMap().size());
+            assertEquals("name", request.getParameter("name"));
+            assertEquals("transientName", request.getParameter("transientName"));
         }
 
         @Test
@@ -473,6 +466,20 @@ public class MockMvcRequestBuilderUtilsTests {
             assertEquals(2, request.getParameterMap().size());
             assertEquals("name", request.getParameter("name"));
             assertEquals("transientName", request.getParameter("transientName"));
+        }
+
+        @Test
+        public void testIncludeStaticField() {
+            final ConfigurationForm form = new ConfigurationForm();
+            form.setName("name");
+            form.setTransientName("transientName");
+
+            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, INCLUDE_STATIC);
+            final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
+
+            assertEquals(2, request.getParameterMap().size());
+            assertEquals("name", request.getParameter("name"));
+            assertEquals("static name", request.getParameter("STATIC_NAME"));
         }
 
         @Test

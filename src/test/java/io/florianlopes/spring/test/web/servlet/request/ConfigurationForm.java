@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 public class ConfigurationForm {
 
     public static final Comparator<ConfigurationForm> COMPARATOR_NAME = Comparator.comparing(ConfigurationForm::getName);
-    public static final String STATIC_NAME = "static name";
+    public static String STATIC_NAME = "static name";
 
     private String name;
     private transient String transientName;
     private final String finalName = "finalValue";
-    
+
     private Inner inner;
 
     @Data
