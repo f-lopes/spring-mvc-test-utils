@@ -40,7 +40,11 @@ import org.springframework.util.CollectionUtils;
 public class MockMvcRequestBuilderUtils {
 
     private static final PropertyEditorRegistrySupport PROPERTY_EDITOR_REGISTRY = new SimpleTypeConverter();
-    private static final Configuration DEFAULT_CONFIG = Configuration.builder().build();
+    private static final Configuration DEFAULT_CONFIG = Configuration.builder()
+            .includeFinal(true)
+            .includeTransient(false)
+            .includeStatic(false)
+            .build();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MockMvcRequestBuilderUtils.class);
 
@@ -308,10 +312,7 @@ public class MockMvcRequestBuilderUtils {
          * Creates a new builder that excludes transient and static fields by default.
          */
         public static Builder builder() {
-            return new Builder()
-                    .includeFinal(true)
-                    .includeTransient(false)
-                    .includeStatic(false);
+            return new Builder();
         }
 
         public static class Builder {
@@ -347,21 +348,15 @@ public class MockMvcRequestBuilderUtils {
                 Predicate<Field> fieldPredicate = this.fieldPredicate != null ? BASE_PREDICATE.and(this.fieldPredicate) : BASE_PREDICATE;
 
                 if (!this.includeFinal) {
-                    fieldPredicate = fieldPredicate != null
-                            ? fieldPredicate.and(Builder::isNotFinal)
-                            : Builder::isNotFinal;
+                    fieldPredicate = fieldPredicate.and(Builder::isNotFinal);
                 }
 
                 if (!this.includeTransient) {
-                    fieldPredicate = fieldPredicate != null
-                            ? fieldPredicate.and(Builder::isNotTransient)
-                            : Builder::isNotTransient;
+                    fieldPredicate = fieldPredicate.and(Builder::isNotTransient);
                 }
 
                 if (!this.includeStatic) {
-                    fieldPredicate = fieldPredicate != null
-                            ? fieldPredicate.and(Builder::isNotStatic)
-                            : Builder::isNotStatic;
+                    fieldPredicate = fieldPredicate.and(Builder::isNotStatic);
                 }
 
                 return new Configuration(fieldPredicate);

@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ConfigurationForm {
 
-    public static final Comparator<ConfigurationForm> COMPARATOR_NAME = Comparator.comparing(ConfigurationForm::getName);
-    public static String STATIC_NAME = "static name";
+    private static final Comparator<ConfigurationForm> COMPARATOR_NAME = Comparator.comparing(ConfigurationForm::getName);
+    private static String STATIC_NAME = "static name";
 
     private String name;
     private transient String transientName;
