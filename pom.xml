@@ -37,7 +37,7 @@
 		<maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
 		<maven-jxr-plugin.version>3.3.0</maven-jxr-plugin.version>
 		<nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
-		<logback-classic.version>1.4.12</logback-classic.version>
+		<logback-classic.version>1.5.7</logback-classic.version>
 		<validation-api.version>2.0.1.Final</validation-api.version>
 		<javax.el.version>2.2.6</javax.el.version>
 		<javax.el-api.version>3.0.0</javax.el-api.version>
