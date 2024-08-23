@@ -25,7 +25,7 @@
         <java.version>11</java.version>
 		<spring-framework.version>5.3.21</spring-framework.version>
         <commons-lang3.version>3.16.0</commons-lang3.version>
-        <lombok.version>1.18.28</lombok.version>
+        <lombok.version>1.18.34</lombok.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
