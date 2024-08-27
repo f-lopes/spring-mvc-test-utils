@@ -5,12 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.florianlopes</groupId>
-    <artifactId>spring-mvc-test-utils</artifactId>
-    <version>3.3.0-SNAPSHOT</version>
+	<artifactId>spring-mvc-test-utils-parent</artifactId>
+	<version>${revision}${changelist}</version>
+	<packaging>pom</packaging>
 
-    <name>spring-mvc-test-utils</name>
+	<name>spring-mvc-test-utils-parent</name>
     <description>Spring MVC utils aimed to ease Spring MVC framework testing</description>
-    <url>https://blog.florianlopes.io</url>
+	<url>https://blog.florianlopes.io/tool-for-spring-mockmvcrequestbuilder-forms-tests/</url>
 
     <licenses>
         <license>
@@ -19,32 +20,41 @@
         </license>
     </licenses>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>11</java.version>
-		<spring-framework.version>5.3.21</spring-framework.version>
-        <commons-lang3.version>3.16.0</commons-lang3.version>
-        <lombok.version>1.18.34</lombok.version>
-        <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
-        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-        <versions-maven-plugin.version>2.17.1</versions-maven-plugin.version>
-        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-		<maven-pmd-plugin.version>3.24.0</maven-pmd-plugin.version>
-		<maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-		<maven-javadoc-plugin.version>3.8.0</maven-javadoc-plugin.version>
-		<maven-jxr-plugin.version>3.5.0</maven-jxr-plugin.version>
-		<nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
+	<modules>
+		<module>spring-mvc-test-utils</module>
+		<module>smoke-tests</module>
+	</modules>
+
+	<properties>
+		<revision>4.0.0</revision>
+		<changelist>-SNAPSHOT</changelist>
+
+		<java.version>17</java.version>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<spring-framework.version>6.1.12</spring-framework.version>
+
 		<logback-classic.version>1.5.7</logback-classic.version>
-		<validation-api.version>2.0.1.Final</validation-api.version>
-		<javax.el.version>2.2.6</javax.el.version>
-		<javax.el-api.version>3.0.0</javax.el-api.version>
-		<hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
-		<spotbugs-maven-plugin.version>4.8.6.2</spotbugs-maven-plugin.version>
+
+		<jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
+		<hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
+		<jakarta.validation-api.version>3.1.0</jakarta.validation-api.version>
+		<jakarta.el-api.version>6.0.1</jakarta.el-api.version>
+		<jakarta.el.version>4.0.2</jakarta.el.version>
+
 		<slf4j-api.version>1.7.36</slf4j-api.version>
+
 		<junit-jupiter.version>5.11.0</junit-jupiter.version>
+
+		<lombok.version>1.18.30</lombok.version>
+
+		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+		<maven-surefire-plugin.version>3.4.0</maven-surefire-plugin.version>
+		<versions-maven-plugin.version>2.17.1</versions-maven-plugin.version>
+		<maven-pmd-plugin.version>3.24.0</maven-pmd-plugin.version>
+		<spotbugs-maven-plugin.version>4.8.6.2</spotbugs-maven-plugin.version>
 	</properties>
 
 	<dependencyManagement>
@@ -56,121 +66,22 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>${junit-jupiter.version}</version>
+				<scope>test</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
-        </dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${javax.servlet-api.version}</version>
-			<scope>provided</scope>
-		</dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>provided</scope>
-        </dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j-api.version}</version>
-		</dependency>
-
-        <!-- Test dependencies -->
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
-			<version>${junit-jupiter.version}</version>
-			<scope>test</scope>
-		</dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>test</scope>
-        </dependency>
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>${validation-api.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate.validator</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>${hibernate-validator.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.web</groupId>
-			<artifactId>javax.el</artifactId>
-			<version>${javax.el.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.el</groupId>
-			<artifactId>javax.el-api</artifactId>
-			<version>${javax.el-api.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${logback-classic.version}</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
-                <configuration>
-                    <includes>
-                        <include>*Tests</include>
-                    </includes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -192,19 +103,6 @@
 					<execution>
 						<goals>
 							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>${maven-jxr-plugin.version}</version>
-				<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>jxr</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -239,109 +137,41 @@
 					</execution>
 				</executions>
 			</plugin>
-        </plugins>
-    </build>
 
-	<profiles>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-deploy-plugin</artifactId>
-						<configuration>
-							<!-- Disable this plugin to use nexus-staging-maven-plugin instead:
-							 https://github.com/travis-ci/travis-ci/issues/9555 -->
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>${maven-javadoc-plugin.version}</version>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<version>${maven-source-plugin.version}</version>
-						<executions>
-							<execution>
-								<id>attach-sources</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>attach-javadoc</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>${maven-gpg-plugin.version}</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-								<configuration>
-									<gpgArguments>
-										<arg>--pinentry-mode</arg>
-										<arg>loopback</arg>
-									</gpgArguments>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>${nexus-staging-maven-plugin.version}</version>
-						<extensions>true</extensions>
-						<executions>
-							<execution>
-								<id>default-deploy</id>
-								<phase>deploy</phase>
-								<goals>
-									<goal>deploy</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<serverId>ossrh</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-			<properties>
-				<spotbugs.skip>true</spotbugs.skip>
-				<pmd.skip>true</pmd.skip>
-				<skipTests>true</skipTests>
-			</properties>
-		</profile>
-	</profiles>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<version>1.5.0</version>
+				<configuration>
+					<updatePomFile>true</updatePomFile>
+					<flattenMode>resolveCiFriendliesOnly</flattenMode>
+				</configuration>
+				<executions>
+					<execution>
+						<id>flatten</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>flatten</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>flatten.clean</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
     <developers>
         <developer>
             <name>Florian Lopes</name>
             <email>florian.lopes@outlook.com</email>
             <organization>Florian Lopes</organization>
-            <organizationUrl>http://www.florianlopes.io</organizationUrl>
+			<organizationUrl>https://www.florianlopes.io</organizationUrl>
         </developer>
     </developers>
 
@@ -351,14 +181,4 @@
         <url>https://github.com/f-lopes/spring-mvc-test-utils</url>
     </scm>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 </project>
