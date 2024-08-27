@@ -4,7 +4,7 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.florianlopes/spring-mvc-test-utils/badge.svg)](https://search.maven.org/#artifactdetails%7Cio.florianlopes%7Cspring-mvc-test-utils%7C3.2.0%7Cjar)
 [![Build Status](https://travis-ci.org/f-lopes/spring-mvc-test-utils.svg?branch=develop)](https://travis-ci.org/f-lopes/spring-mvc-test-utils)
-[![codecov](https://codecov.io/gh/f-lopes/spring-mvc-test-utils/branch/master/graph/badge.svg?token=2yY70RB1tw)](https://codecov.io/gh/f-lopes/spring-mvc-test-utils)
+[![codecov](https://codecov.io/gh/f-lopes/spring-mvc-test-utils/branch/main/graph/badge.svg?token=2yY70RB1tw)](https://codecov.io/gh/f-lopes/spring-mvc-test-utils)
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1e521e339dc446328b7ccc52faaa7648)](https://www.codacy.com/app/f-lopes/spring-mvc-test-utils?utm_source=github.com&utm_medium=referral&utm_content=f-lopes/spring-mvc-test-utils&utm_campaign=badger)
 [![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/f-lopes/spring-mvc-test-utils.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/f-lopes/spring-mvc-test-utils/context:java)
@@ -28,7 +28,13 @@ Add this dependency to your `pom.xml` file:
 </dependency>
 ```
 
-**Note:** since version `3.0.0`, `Java 8` is no longer supported, `Java 11` is the minimum supported version.
+_**Note:** since version `4.0.0`, `Java 11` is no longer supported, `Java 17` is the minimum supported version._
+
+_This library is tested with Spring Framework `6.1.12` along with Java `17` and `21` (
+see [smoke-tests](https://github.com/f-lopes/spring-mvc-test-utils/tree/main/smoke-tests/src/tests/java/io/florianlopes/spring/test/web/servlet/request/MockMvcRequestBuilderUtilsSmokeTests.java)
+and [build.yml](https://github.com/f-lopes/spring-mvc-test-utils/blob/main/.github/workflows/build.yml#L15) workflow)_
+
+---
 
 ```MockMvcRequestBuilderUtils.postForm("/url", formObject);```
 
@@ -73,7 +79,8 @@ mockMvc.perform(put("/users").with(MockMvcRequestBuilderUtils.form(addUserForm))
 
 ### Register property editor(s)
 
-This tool relies on default Spring's property editors (see https://github.com/spring-projects/spring-framework/blob/master/spring-beans/src/main/java/org/springframework/beans/PropertyEditorRegistrySupport.java#L200).
+This tool relies on default Spring's property editors (
+see https://github.com/spring-projects/spring-framework/blob/main/spring-beans/src/main/java/org/springframework/beans/PropertyEditorRegistrySupport.java#L200).
 
 If you want to override one of those registered by default, simple use the `MockMvcRequestBuilderUtils.registerPropertyEditor(...)` method:
 ```
@@ -120,9 +127,9 @@ Feel free to contribute using this guide:
     ```git branch -b my-feature```
 5. Commit your changes (and squash them if necessary using `git rebase -i` or `git add -p`)
 6. Pull the latest changes from the original repository
-    ```git checkout master && git pull --rebase upstream master```
-7. Rebase master branch with your feature
-    ```git checkout my-feature && git rebase master```
+   ```git checkout main && git pull --rebase upstream main```
+7. Rebase main branch with your feature
+   ```git checkout my-feature && git rebase main```
     Solve any existing conflicts
 8. Push your changes and create a PR on GitHub
     ```git push -u origin my-feature```

@@ -8,13 +8,52 @@ on:
     branches: [ main ]
 
 jobs:
+
   build:
-    name: "Build with ${{ matrix.java }}"
-    strategy:
-      matrix:
-        java: [ 11, 17 ]
+    name: "Main build"
 
     runs-on: ubuntu-latest
+    outputs:
+      candidate_version_revision: ${{ steps.candidate_version.outputs.candidate_version_revision }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Retrieve current version
+        id: current_version
+        run: echo "project_version=$(mvn help:evaluate -Dexpression=project.version -Dchangelist= -q -DforceStdout)" >> "$GITHUB_OUTPUT"
+
+      - name: Compute release candidate revision version
+        id: candidate_version
+        run: echo "candidate_version_revision=${{ steps.current_version.outputs.project_version }}.$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Build candidate version
+        run: mvn -B -pl '!smoke-tests' clean install -Drevision=${{ steps.candidate_version.outputs.candidate_version_revision }} -Dchangelist=-rc
+
+  smoke-tests:
+    name: "Run smoke tests with Java ${{ matrix.java }} for spring-mvc-test-utils ${{ needs.build.outputs.candidate_version_revision }}-rc version"
+    strategy:
+      matrix:
+        java: [ 17, 21 ]
+
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      candidate_version_revision: ${{ needs.build.outputs.candidate_version_revision }}
 
     steps:
       - uses: actions/checkout@v4
@@ -24,7 +63,14 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
           distribution: 'temurin'
-          cache: 'maven'
 
-      - name: Build with Maven
-        run: mvn -B verify
+      - name: Cache local Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Run smoke tests with Java ${{ matrix.java }} for spring-mvc-test-utils ${{ needs.build.outputs.candidate_version_revision }}-rc version
+        run: mvn -B -pl 'smoke-tests' -Dspring-mvc-test-utils.version=${candidate_version_revision}-rc -Djava.version=${{ matrix.java }} clean verify
