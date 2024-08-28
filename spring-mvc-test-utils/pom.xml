@@ -23,6 +23,8 @@
         <hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
 
+        <assertj-core.version>3.26.3</assertj-core.version>
+
         <lombok.version>1.18.30</lombok.version>
 
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
@@ -81,6 +83,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj-core.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

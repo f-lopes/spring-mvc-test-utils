@@ -13,7 +13,9 @@ public class ConfigurationForm {
 
     private static final Comparator<ConfigurationForm> COMPARATOR_NAME = Comparator.comparing(ConfigurationForm::getName);
     private static String STATIC_NAME = "static name";
+
     private final String finalName = "finalValue";
+
     private String name;
     private transient String transientName;
     private Inner inner;
