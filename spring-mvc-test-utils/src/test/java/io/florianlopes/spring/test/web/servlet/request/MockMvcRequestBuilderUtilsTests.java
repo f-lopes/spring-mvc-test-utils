@@ -1,6 +1,5 @@
 package io.florianlopes.spring.test.web.servlet.request;
 
-import io.florianlopes.spring.test.web.servlet.request.MockMvcRequestBuilderUtils.Configuration;
 import jakarta.servlet.ServletContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -30,19 +29,15 @@ public class MockMvcRequestBuilderUtilsTests {
     private static final String POST_FORM_URL = "/test";
     private static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
 
-    private static final Configuration EXCLUDE_FINAL = Configuration.builder().includeFinal(false).includeTransient(true).build();
-    private static final Configuration INCLUDE_TRANSIENT = Configuration.builder().includeFinal(false).includeTransient(true).build();
-    private static final Configuration INCLUDE_STATIC = Configuration.builder().includeFinal(false).includeStatic(true).build();
-
     private ServletContext servletContext;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.servletContext = new MockServletContext();
     }
 
     @Test
-    public void withParamsNullForm() {
+    void withParamsNullForm() {
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
                 .with(MockMvcRequestBuilderUtils.form(null));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -52,7 +47,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void withParamsNullAndEmptyFields() {
+    void withParamsNullAndEmptyFields() {
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = post(POST_FORM_URL)
                 .with(MockMvcRequestBuilderUtils.form(new AddUserForm("", "", null, null)));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -65,7 +60,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void withParamsSimpleFields() {
+    void withParamsSimpleFields() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .firstName("John").name("Doe")
                 .currentAddress(new AddUserForm.Address(1, "Street", 5222, "New York"))
@@ -81,7 +76,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void withParamsSimpleCollection() {
+    void withParamsSimpleCollection() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe")
                 .usernames(Arrays.asList("john.doe", "jdoe"))
                 .build();
@@ -96,7 +91,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void withParamsComplexCollection() {
+    void withParamsComplexCollection() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe").build();
         MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
         final LocalDate bachelorDate = LocalDate.now().minusYears(2);
@@ -115,7 +110,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void withParamsSimpleArray() {
+    void withParamsSimpleArray() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe")
                 .usernamesArray(new String[]{"john.doe", "jdoe"})
                 .build();
@@ -129,7 +124,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void withParamsComplexArray() {
+    void withParamsComplexArray() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe")
                 .usernames(Arrays.asList("john.doe", "jdoe"))
                 .formerAddresses(new AddUserForm.Address[]{
@@ -147,7 +142,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void withParamsEnumField() {
+    void withParamsEnumField() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .firstName("John").name("Doe").gender(AddUserForm.Gender.MALE)
                 .build();
@@ -160,7 +155,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void withParamsSimpleMapField() {
+    void withParamsSimpleMapField() {
         final Map<String, String> metadatas = new HashMap<>();
         metadatas.put("firstName", "John");
         metadatas.put("name", "Doe");
@@ -179,7 +174,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void withParamsBigDecimal() {
+    void withParamsBigDecimal() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .identificationNumber(BigDecimal.TEN)
                 .build();
@@ -192,7 +187,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void withParamsBigInteger() {
+    void withParamsBigInteger() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .identificationNumberBigInt(BigInteger.TEN)
                 .build();
@@ -205,7 +200,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void withParamsRegisterPropertyEditor() {
+    void withParamsRegisterPropertyEditor() {
         try {
             // Registering a property editor should override default conversion strategy
             MockMvcRequestBuilderUtils.registerPropertyEditor(BigInteger.class, new PropertyEditorSupport() {
@@ -229,7 +224,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void correctUrl() {
+    void correctUrl() {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL,
                 new AddUserForm("John", "Doe", null, null));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -238,7 +233,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void nullForm() {
+    void nullForm() {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, null);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
@@ -246,7 +241,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void nullAndEmptyFields() {
+    void nullAndEmptyFields() {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL,
                 new AddUserForm("", "", null, null));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -258,7 +253,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void simpleFields() {
+    void simpleFields() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .firstName("John").name("Doe")
                 .currentAddress(new AddUserForm.Address(1, "Street", 5222, "New York"))
@@ -271,7 +266,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void simpleCollection() {
+    void simpleCollection() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe")
                 .usernames(Arrays.asList("john.doe", "jdoe"))
                 .build();
@@ -283,7 +278,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void complexCollections() {
+    void complexCollections() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe").build();
         MockMvcRequestBuilderUtils.registerPropertyEditor(LocalDate.class, new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN));
         final LocalDate bachelorDate = LocalDate.now().minusYears(2);
@@ -299,7 +294,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void simpleArray() {
+    void simpleArray() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe")
                 .usernamesArray(new String[]{"john.doe", "jdoe"})
                 .build();
@@ -311,7 +306,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void complexArray() {
+    void complexArray() {
         final AddUserForm addUserForm = AddUserForm.builder().firstName("John").name("Doe")
                 .usernames(Arrays.asList("john.doe", "jdoe"))
                 .formerAddresses(new AddUserForm.Address[]{
@@ -327,7 +322,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void enumField() {
+    void enumField() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .firstName("John").name("Doe").gender(AddUserForm.Gender.MALE)
                 .build();
@@ -338,7 +333,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void simpleMapField() {
+    void simpleMapField() {
         final Map<String, String> metadatas = new HashMap<>();
         metadatas.put("firstName", "John");
         metadatas.put("name", "Doe");
@@ -355,7 +350,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void bigDecimal() {
+    void bigDecimal() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .identificationNumber(BigDecimal.TEN)
                 .build();
@@ -366,7 +361,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void bigInteger() {
+    void bigInteger() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .identificationNumberBigInt(BigInteger.TEN)
                 .build();
@@ -377,7 +372,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void registerPropertyEditor() {
+    void registerPropertyEditor() {
         try {
             // Registering a property editor should override default conversion strategy
             MockMvcRequestBuilderUtils.registerPropertyEditor(BigInteger.class, new PropertyEditorSupport() {
@@ -399,7 +394,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void postMethod() {
+    void postMethod() {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL,
                 new AddUserForm("John", "Doe", null, null));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -408,7 +403,7 @@ public class MockMvcRequestBuilderUtilsTests {
     }
 
     @Test
-    public void putMethod() {
+    void putMethod() {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.putForm(POST_FORM_URL,
                 new AddUserForm("John", "Doe", null, null));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
@@ -420,7 +415,7 @@ public class MockMvcRequestBuilderUtilsTests {
     class ConfigurationTest {
 
         @Test
-        public void testDefaultConfig() {
+        void testDefaultConfig() {
             final ConfigurationForm form = new ConfigurationForm();
             form.setName("name");
             form.setTransientName("transientName");
@@ -436,12 +431,12 @@ public class MockMvcRequestBuilderUtilsTests {
         }
 
         @Test
-        public void testExcludeFinalField() {
+        void testExcludeFinalField() {
             final ConfigurationForm form = new ConfigurationForm();
             form.setName("name");
             form.setTransientName("transientName");
 
-            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, EXCLUDE_FINAL);
+            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, Configuration.EXCLUDE_FINAL);
             final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
 
             assertThat(request.getParameterMap()).hasSize(2);
@@ -450,12 +445,12 @@ public class MockMvcRequestBuilderUtilsTests {
         }
 
         @Test
-        public void testIncludeTransientField() {
+        void testIncludeTransientField() {
             final ConfigurationForm form = new ConfigurationForm();
             form.setName("name");
             form.setTransientName("transientName");
 
-            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, INCLUDE_TRANSIENT);
+            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, Configuration.INCLUDE_TRANSIENT);
             final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
 
             assertThat(request.getParameterMap()).hasSize(2);
@@ -464,12 +459,12 @@ public class MockMvcRequestBuilderUtilsTests {
         }
 
         @Test
-        public void testIncludeStaticField() {
+        void testIncludeStaticField() {
             final ConfigurationForm form = new ConfigurationForm();
             form.setName("name");
             form.setTransientName("transientName");
 
-            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, INCLUDE_STATIC);
+            final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, Configuration.INCLUDE_STATIC);
             final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
 
             assertThat(request.getParameterMap()).hasSize(2);
@@ -478,7 +473,7 @@ public class MockMvcRequestBuilderUtilsTests {
         }
 
         @Test
-        public void testCustomPredicate() {
+        void testCustomPredicate() {
             final Configuration config = Configuration.builder().fieldPredicate(field -> "transientName".equals(field.getName())).build();
 
             final ConfigurationForm form = new ConfigurationForm();
@@ -492,7 +487,7 @@ public class MockMvcRequestBuilderUtilsTests {
         }
 
         @Test
-        public void testCustomPredicateWithModifier() {
+        void testCustomPredicateWithModifier() {
             final Configuration config = Configuration.builder().includeTransient(true).fieldPredicate(field -> "transientName".equals(field.getName())).build();
 
             final ConfigurationForm form = new ConfigurationForm();
