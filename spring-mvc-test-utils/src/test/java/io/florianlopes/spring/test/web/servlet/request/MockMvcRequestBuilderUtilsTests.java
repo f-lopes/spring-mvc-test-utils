@@ -2,7 +2,6 @@ package io.florianlopes.spring.test.web.servlet.request;
 
 import io.florianlopes.spring.test.web.servlet.request.MockMvcRequestBuilderUtils.Configuration;
 import jakarta.servlet.ServletContext;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 /**
@@ -49,7 +48,7 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
-        assertEquals(0, request.getParameterMap().size());
+        assertThat(request.getParameterMap()).isEmpty();
     }
 
     @Test
@@ -59,10 +58,10 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
-        assertEquals(StringUtils.EMPTY, request.getParameter("name"));
-        assertEquals(StringUtils.EMPTY, request.getParameter("firstName"));
-        assertNull(request.getParameter("birthDate"));
-        assertNull(request.getParameter("currentAddress.city"));
+        assertThat(request.getParameter("name")).isEmpty();
+        assertThat(request.getParameter("firstName")).isEmpty();
+        assertThat(request.getParameter("birthDate")).isNull();
+        assertThat(request.getParameter("currentAddress.city")).isNull();
     }
 
     @Test
@@ -77,8 +76,8 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
-        assertEquals("John", request.getParameter("firstName"));
-        assertEquals("New York", request.getParameter("currentAddress.city"));
+        assertThat(request.getParameter("firstName")).isEqualTo("John");
+        assertThat(request.getParameter("currentAddress.city")).isEqualTo("New York");
     }
 
     @Test
@@ -92,8 +91,8 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
-        assertEquals("john.doe", request.getParameter("usernames[0]"));
-        assertEquals("jdoe", request.getParameter("usernames[1]"));
+        assertThat(request.getParameter("usernames[0]")).isEqualTo("john.doe");
+        assertThat(request.getParameter("usernames[1]")).isEqualTo("jdoe");
     }
 
     @Test
@@ -109,10 +108,10 @@ public class MockMvcRequestBuilderUtilsTests {
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
-        assertEquals("License", request.getParameter("diplomas[0].name"));
-        assertEquals(bachelorDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)), request.getParameter("diplomas[0].date"));
-        assertEquals("MSC", request.getParameter("diplomas[1].name"));
-        assertEquals(masterDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)), request.getParameter("diplomas[1].date"));
+        assertThat(request.getParameter("diplomas[0].name")).isEqualTo("License");
+        assertThat(request.getParameter("diplomas[0].date")).isEqualTo(bachelorDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)));
+        assertThat(request.getParameter("diplomas[1].name")).isEqualTo("MSC");
+        assertThat(request.getParameter("diplomas[1].date")).isEqualTo(masterDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)));
     }
 
     @Test
@@ -125,8 +124,8 @@ public class MockMvcRequestBuilderUtilsTests {
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
-        assertEquals("john.doe", request.getParameter("usernamesArray[0]"));
-        assertEquals("jdoe", request.getParameter("usernamesArray[1]"));
+        assertThat(request.getParameter("usernamesArray[0]")).isEqualTo("john.doe");
+        assertThat(request.getParameter("usernamesArray[1]")).isEqualTo("jdoe");
     }
 
     @Test
@@ -143,8 +142,8 @@ public class MockMvcRequestBuilderUtilsTests {
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
-        assertEquals("john.doe", request.getParameter("usernames[0]"));
-        assertEquals("jdoe", request.getParameter("usernames[1]"));
+        assertThat(request.getParameter("usernames[0]")).isEqualTo("john.doe");
+        assertThat(request.getParameter("usernames[1]")).isEqualTo("jdoe");
     }
 
     @Test
@@ -157,7 +156,7 @@ public class MockMvcRequestBuilderUtilsTests {
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
-        assertEquals("MALE", request.getParameter("gender"));
+        assertThat(request.getParameter("gender")).isEqualTo("MALE");
     }
 
     @Test
@@ -174,9 +173,9 @@ public class MockMvcRequestBuilderUtilsTests {
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
-        assertEquals("John", request.getParameter("metadatas[firstName]"));
-        assertEquals("Doe", request.getParameter("metadatas[name]"));
-        assertEquals("", request.getParameter("metadatas[gender]"));
+        assertThat(request.getParameter("metadatas[firstName]")).isEqualTo("John");
+        assertThat(request.getParameter("metadatas[name]")).isEqualTo("Doe");
+        assertThat(request.getParameter("metadatas[gender]")).isEmpty();
     }
 
     @Test
@@ -189,7 +188,7 @@ public class MockMvcRequestBuilderUtilsTests {
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
-        assertEquals("10", request.getParameter("identificationNumber"));
+        assertThat(request.getParameter("identificationNumber")).isEqualTo("10");
     }
 
     @Test
@@ -202,7 +201,7 @@ public class MockMvcRequestBuilderUtilsTests {
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
         mockHttpServletRequestBuilder.postProcessRequest(request);
 
-        assertEquals("10", request.getParameter("identificationNumberBigInt"));
+        assertThat(request.getParameter("identificationNumberBigInt")).isEqualTo("10");
     }
 
     @Test
@@ -222,7 +221,7 @@ public class MockMvcRequestBuilderUtilsTests {
             MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
             mockHttpServletRequestBuilder.postProcessRequest(request);
 
-            assertEquals("textValue", request.getParameter("identificationNumberBigInt"));
+            assertThat(request.getParameter("identificationNumberBigInt")).isEqualTo("textValue");
         } finally {
             // Restore original property editor
             MockMvcRequestBuilderUtils.registerPropertyEditor(BigInteger.class, new CustomNumberEditor(BigInteger.class, true));
@@ -235,7 +234,7 @@ public class MockMvcRequestBuilderUtilsTests {
                 new AddUserForm("John", "Doe", null, null));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        assertEquals(POST_FORM_URL, request.getPathInfo());
+        assertThat(request.getPathInfo()).isEqualTo(POST_FORM_URL);
     }
 
     @Test
@@ -243,7 +242,7 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, null);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        assertEquals(0, request.getParameterMap().size());
+        assertThat(request.getParameterMap()).isEmpty();
     }
 
     @Test
@@ -252,10 +251,10 @@ public class MockMvcRequestBuilderUtilsTests {
                 new AddUserForm("", "", null, null));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        assertEquals(StringUtils.EMPTY, request.getParameter("name"));
-        assertEquals(StringUtils.EMPTY, request.getParameter("firstName"));
-        assertNull(request.getParameter("birthDate"));
-        assertNull(request.getParameter("currentAddress.city"));
+        assertThat(request.getParameter("name")).isEmpty();
+        assertThat(request.getParameter("firstName")).isEmpty();
+        assertThat(request.getParameter("birthDate")).isNull();
+        assertThat(request.getParameter("currentAddress.city")).isNull();
     }
 
     @Test
@@ -267,8 +266,8 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        assertEquals("John", request.getParameter("firstName"));
-        assertEquals("New York", request.getParameter("currentAddress.city"));
+        assertThat(request.getParameter("firstName")).isEqualTo("John");
+        assertThat(request.getParameter("currentAddress.city")).isEqualTo("New York");
     }
 
     @Test
@@ -279,8 +278,8 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        assertEquals("john.doe", request.getParameter("usernames[0]"));
-        assertEquals("jdoe", request.getParameter("usernames[1]"));
+        assertThat(request.getParameter("usernames[0]")).isEqualTo("john.doe");
+        assertThat(request.getParameter("usernames[1]")).isEqualTo("jdoe");
     }
 
     @Test
@@ -293,10 +292,10 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
 
         MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
-        assertEquals("License", request.getParameter("diplomas[0].name"));
-        assertEquals(bachelorDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)), request.getParameter("diplomas[0].date"));
-        assertEquals("MSC", request.getParameter("diplomas[1].name"));
-        assertEquals(masterDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)), request.getParameter("diplomas[1].date"));
+        assertThat(request.getParameter("diplomas[0].name")).isEqualTo("License");
+        assertThat(request.getParameter("diplomas[0].date")).isEqualTo(bachelorDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)));
+        assertThat(request.getParameter("diplomas[1].name")).isEqualTo("MSC");
+        assertThat(request.getParameter("diplomas[1].date")).isEqualTo(masterDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT_PATTERN)));
     }
 
     @Test
@@ -307,8 +306,8 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        assertEquals("john.doe", request.getParameter("usernamesArray[0]"));
-        assertEquals("jdoe", request.getParameter("usernamesArray[1]"));
+        assertThat(request.getParameter("usernamesArray[0]")).isEqualTo("john.doe");
+        assertThat(request.getParameter("usernamesArray[1]")).isEqualTo("jdoe");
     }
 
     @Test
@@ -323,8 +322,8 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        assertEquals("john.doe", request.getParameter("usernames[0]"));
-        assertEquals("jdoe", request.getParameter("usernames[1]"));
+        assertThat(request.getParameter("usernames[0]")).isEqualTo("john.doe");
+        assertThat(request.getParameter("usernames[1]")).isEqualTo("jdoe");
     }
 
     @Test
@@ -335,7 +334,7 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        assertEquals("MALE", request.getParameter("gender"));
+        assertThat(request.getParameter("gender")).isEqualTo("MALE");
     }
 
     @Test
@@ -350,9 +349,9 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        assertEquals("John", request.getParameter("metadatas[firstName]"));
-        assertEquals("Doe", request.getParameter("metadatas[name]"));
-        assertEquals("", request.getParameter("metadatas[gender]"));
+        assertThat(request.getParameter("metadatas[firstName]")).isEqualTo("John");
+        assertThat(request.getParameter("metadatas[name]")).isEqualTo("Doe");
+        assertThat(request.getParameter("metadatas[gender]")).isEmpty();
     }
 
     @Test
@@ -363,7 +362,7 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        assertEquals("10", request.getParameter("identificationNumber"));
+        assertThat(request.getParameter("identificationNumber")).isEqualTo("10");
     }
 
     @Test
@@ -374,7 +373,7 @@ public class MockMvcRequestBuilderUtilsTests {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        assertEquals("10", request.getParameter("identificationNumberBigInt"));
+        assertThat(request.getParameter("identificationNumberBigInt")).isEqualTo("10");
     }
 
     @Test
@@ -392,7 +391,7 @@ public class MockMvcRequestBuilderUtilsTests {
             final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, build);
 
             MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
-            assertEquals("textValue", request.getParameter("identificationNumberBigInt"));
+            assertThat(request.getParameter("identificationNumberBigInt")).isEqualTo("textValue");
         } finally {
             // Restore original property editor
             MockMvcRequestBuilderUtils.registerPropertyEditor(BigInteger.class, new CustomNumberEditor(BigInteger.class, true));
@@ -405,7 +404,7 @@ public class MockMvcRequestBuilderUtilsTests {
                 new AddUserForm("John", "Doe", null, null));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        assertEquals("POST", request.getMethod());
+        assertThat(request.getMethod()).isEqualTo("POST");
     }
 
     @Test
@@ -414,7 +413,7 @@ public class MockMvcRequestBuilderUtilsTests {
                 new AddUserForm("John", "Doe", null, null));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(this.servletContext);
 
-        assertEquals("PUT", request.getMethod());
+        assertThat(request.getMethod()).isEqualTo("PUT");
     }
 
     @Nested
@@ -430,10 +429,10 @@ public class MockMvcRequestBuilderUtilsTests {
             final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form);
             final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
 
-            assertEquals(3, request.getParameterMap().size());
-            assertEquals("name", request.getParameter("name"));
-            assertEquals("inner", request.getParameter("inner.value"));
-            assertEquals("finalValue", request.getParameter("finalName"));
+            assertThat(request.getParameterMap()).hasSize(3);
+            assertThat(request.getParameter("name")).isEqualTo("name");
+            assertThat(request.getParameter("inner.value")).isEqualTo("inner");
+            assertThat(request.getParameter("finalName")).isEqualTo("finalValue");
         }
 
         @Test
@@ -445,9 +444,9 @@ public class MockMvcRequestBuilderUtilsTests {
             final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, EXCLUDE_FINAL);
             final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
 
-            assertEquals(2, request.getParameterMap().size());
-            assertEquals("name", request.getParameter("name"));
-            assertEquals("transientName", request.getParameter("transientName"));
+            assertThat(request.getParameterMap()).hasSize(2);
+            assertThat(request.getParameter("name")).isEqualTo("name");
+            assertThat(request.getParameter("transientName")).isEqualTo("transientName");
         }
 
         @Test
@@ -459,9 +458,9 @@ public class MockMvcRequestBuilderUtilsTests {
             final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, INCLUDE_TRANSIENT);
             final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
 
-            assertEquals(2, request.getParameterMap().size());
-            assertEquals("name", request.getParameter("name"));
-            assertEquals("transientName", request.getParameter("transientName"));
+            assertThat(request.getParameterMap()).hasSize(2);
+            assertThat(request.getParameter("name")).isEqualTo("name");
+            assertThat(request.getParameter("transientName")).isEqualTo("transientName");
         }
 
         @Test
@@ -473,9 +472,9 @@ public class MockMvcRequestBuilderUtilsTests {
             final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, INCLUDE_STATIC);
             final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
 
-            assertEquals(2, request.getParameterMap().size());
-            assertEquals("name", request.getParameter("name"));
-            assertEquals("static name", request.getParameter("STATIC_NAME"));
+            assertThat(request.getParameterMap()).hasSize(2);
+            assertThat(request.getParameter("name")).isEqualTo("name");
+            assertThat(request.getParameter("STATIC_NAME")).isEqualTo("static name");
         }
 
         @Test
@@ -489,7 +488,7 @@ public class MockMvcRequestBuilderUtilsTests {
             final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, config);
             final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
 
-            assertTrue(request.getParameterMap().isEmpty());
+            assertThat(request.getParameterMap()).isEmpty();
         }
 
         @Test
@@ -503,8 +502,8 @@ public class MockMvcRequestBuilderUtilsTests {
             final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form, config);
             final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
 
-            assertEquals(1, request.getParameterMap().size());
-            assertEquals("transientName", request.getParameter("transientName"));
+            assertThat(request.getParameterMap()).hasSize(1);
+            assertThat(request.getParameter("transientName")).isEqualTo("transientName");
         }
 
     }
