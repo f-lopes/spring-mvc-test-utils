@@ -17,12 +17,10 @@ import org.springframework.util.CollectionUtils;
 
 import java.beans.PropertyEditor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.time.temporal.Temporal;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -35,11 +33,7 @@ import java.util.stream.Collectors;
 public class MockMvcRequestBuilderUtils {
 
     private static final PropertyEditorRegistrySupport PROPERTY_EDITOR_REGISTRY = new SimpleTypeConverter();
-    private static final Configuration DEFAULT_CONFIG = Configuration.builder()
-            .includeFinal(true)
-            .includeTransient(false)
-            .includeStatic(false)
-            .build();
+    private static final Configuration DEFAULT_CONFIG = Configuration.DEFAULT;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MockMvcRequestBuilderUtils.class);
 
@@ -171,7 +165,7 @@ public class MockMvcRequestBuilderUtils {
     private static List<Field> getFormFields(Object form, Configuration config) {
         return FieldUtils.getAllFieldsList(form.getClass())
                 .stream()
-                .filter(config.fieldPredicate)
+                .filter(config.fieldPredicate())
                 .collect(Collectors.toList());
     }
 
@@ -291,90 +285,4 @@ public class MockMvcRequestBuilderUtils {
             return request;
         }
     }
-
-    /**
-     * Configuration class that allows the exclusion of specific fields.
-     */
-    public static class Configuration {
-
-        private final Predicate<Field> fieldPredicate;
-
-        private Configuration(Predicate<Field> fieldPredicate) {
-            this.fieldPredicate = fieldPredicate;
-        }
-
-        /**
-         * Creates a new builder that excludes transient and static fields by default.
-         */
-        public static Builder builder() {
-            return new Builder();
-        }
-
-        public static class Builder {
-
-            private static final Predicate<Field> BASE_PREDICATE = Builder::isNotSynthetic;
-
-            private Predicate<Field> fieldPredicate;
-            private boolean includeFinal = true;
-            private boolean includeTransient = false;
-            private boolean includeStatic = false;
-
-            public Builder fieldPredicate(Predicate<Field> fieldPredicate) {
-                this.fieldPredicate = Objects.requireNonNull(fieldPredicate, "fieldPredicate cannot be null");
-                return this;
-            }
-
-            public Builder includeTransient(boolean includeTransient) {
-                this.includeTransient = includeTransient;
-                return this;
-            }
-
-            public Builder includeFinal(boolean includeFinal) {
-                this.includeFinal = includeFinal;
-                return this;
-            }
-
-            public Builder includeStatic(boolean includeStatic) {
-                this.includeStatic = includeStatic;
-                return this;
-            }
-
-            public Configuration build() {
-                Predicate<Field> fieldPredicate = this.fieldPredicate != null ? BASE_PREDICATE.and(this.fieldPredicate) : BASE_PREDICATE;
-
-                if (!this.includeFinal) {
-                    fieldPredicate = fieldPredicate.and(Builder::isNotFinal);
-                }
-
-                if (!this.includeTransient) {
-                    fieldPredicate = fieldPredicate.and(Builder::isNotTransient);
-                }
-
-                if (!this.includeStatic) {
-                    fieldPredicate = fieldPredicate.and(Builder::isNotStatic);
-                }
-
-                return new Configuration(fieldPredicate);
-            }
-
-            private static boolean isNotFinal(Field field) {
-                return !Modifier.isFinal(field.getModifiers());
-            }
-
-            private static boolean isNotTransient(Field field) {
-                return !Modifier.isTransient(field.getModifiers());
-            }
-
-            private static boolean isNotStatic(Field field) {
-                return !Modifier.isStatic(field.getModifiers());
-            }
-
-            private static boolean isNotSynthetic(Field field) {
-                return !field.isSynthetic();
-            }
-
-        }
-
-    }
-
 }
