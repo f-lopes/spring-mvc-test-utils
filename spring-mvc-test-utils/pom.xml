@@ -18,7 +18,7 @@
     <url>https://blog.florianlopes.io/tool-for-spring-mockmvcrequestbuilder-forms-tests/</url>
 
     <properties>
-        <commons-lang3.version>3.13.0</commons-lang3.version>
+        <commons-lang3.version>3.16.0</commons-lang3.version>
         <logback-classic.version>1.5.7</logback-classic.version>
         <hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
