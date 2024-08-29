@@ -44,6 +44,11 @@ jobs:
       - name: Build candidate version
         run: mvn -B -pl '!smoke-tests' clean install -Drevision=${{ steps.candidate_version.outputs.candidate_version_revision }} -Dchangelist=-rc
 
+      - name: Upload JaCoCo coverage reports to Codecov
+        uses: codecov/codecov-action@v4.5.0
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
   smoke-tests:
     name: "Run smoke tests with Java ${{ matrix.java }} for spring-mvc-test-utils ${{ needs.build.outputs.candidate_version_revision }}-rc version"
     strategy:
