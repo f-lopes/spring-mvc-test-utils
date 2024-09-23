@@ -2,10 +2,7 @@ package io.florianlopes.spring.test.web.servlet.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
@@ -34,7 +31,7 @@ class AddUserForm {
     @NotNull
     private Gender gender;
     @NotNull
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @DateTimeFormat(pattern = "dd.MM.yyyy")
     private LocalDate birthDate;
     @NotNull
     private Address currentAddress;
@@ -48,6 +45,8 @@ class AddUserForm {
     private Address[] formerAddresses;
     @NotEmpty
     private Map<String, String> metadatas;
+    @NotEmpty
+    private Map<String, Diploma> diplomasMap;
 
     AddUserForm(String firstName, String name, LocalDate birthDate, Address currentAddress) {
         this.firstName = firstName;
@@ -66,7 +65,7 @@ class AddUserForm {
     static class Diploma {
         @NotEmpty
         private String name;
-        @DateTimeFormat(pattern = "dd/MM/yyyy")
+        @DateTimeFormat(pattern = "dd.MM.yyyy")
         @NotNull
         private LocalDate date;
 
@@ -78,6 +77,7 @@ class AddUserForm {
 
     @Data
     @NoArgsConstructor
+    @With
     static class Address {
         @NotNull
         private int streetNumber;
@@ -87,6 +87,16 @@ class AddUserForm {
         private int postalCode;
         @NotEmpty
         private String city;
+
+        private Address linkedAddress;
+
+        public Address(int streetNumber, String streetName, int postalCode, String city, Address linkedAddress) {
+            this.streetNumber = streetNumber;
+            this.streetName = streetName;
+            this.postalCode = postalCode;
+            this.city = city;
+            this.linkedAddress = linkedAddress;
+        }
 
         Address(int streetNumber, String streetName, int postalCode, String city) {
             this.streetNumber = streetNumber;

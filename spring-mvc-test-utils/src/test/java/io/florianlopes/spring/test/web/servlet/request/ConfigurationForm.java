@@ -20,6 +20,8 @@ public class ConfigurationForm {
     private transient String transientName;
     private Inner inner;
 
+    private String simpleField;
+
     @Data
     @AllArgsConstructor
     public static class Inner {
