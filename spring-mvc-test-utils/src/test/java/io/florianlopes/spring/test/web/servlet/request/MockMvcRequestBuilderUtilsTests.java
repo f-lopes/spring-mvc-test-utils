@@ -37,6 +37,7 @@ public class MockMvcRequestBuilderUtilsTests {
     @BeforeEach
     void setUp() {
         this.servletContext = new MockServletContext();
+        LOG_CAPTOR.clearLogs();
     }
 
     @Test
@@ -283,7 +284,7 @@ public class MockMvcRequestBuilderUtilsTests {
 
     @Test
     void logsEveryFieldAddedToHttpRequest() {
-        final int numberOfFormFields = 32;
+        final int numberOfFormFields = 36;
         final AddUserForm addUserForm = TestFixtures.aCompleteAddUserForm();
 
         MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, addUserForm);

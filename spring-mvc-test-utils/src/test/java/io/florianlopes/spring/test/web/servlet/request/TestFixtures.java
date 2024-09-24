@@ -12,6 +12,8 @@ public class TestFixtures {
     }
 
     static AddUserForm aCompleteAddUserForm() {
+        final LocalDate licenseDate = LocalDate.of(2021, 9, 4);
+        final LocalDate mscDate = LocalDate.of(2024, 9, 4);
         return AddUserForm.builder()
                 .firstName("John").name("Doe")
                 .gender(AddUserForm.Gender.MALE)
@@ -27,8 +29,12 @@ public class TestFixtures {
                         new AddUserForm.Address(20, "Street", 5222, "Washington")
                 })
                 .diplomas(List.of(
-                        new AddUserForm.Diploma("License", LocalDate.of(2021, 9, 4)),
-                        new AddUserForm.Diploma("MSC", LocalDate.of(2024, 9, 4))
+                        new AddUserForm.Diploma("License", licenseDate),
+                        new AddUserForm.Diploma("MSC", mscDate)
+                ))
+                .diplomasMap(Map.of(
+                        "License", new AddUserForm.Diploma("License", licenseDate),
+                        "MSC", new AddUserForm.Diploma("MSC", mscDate)
                 ))
                 .build();
     }
