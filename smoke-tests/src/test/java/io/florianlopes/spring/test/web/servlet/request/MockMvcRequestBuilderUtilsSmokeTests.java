@@ -41,7 +41,7 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
 
     @Test
     public void fullTestPostMethod() throws Exception {
-        final AddUserForm addUserForm = aCompletedAddUserForm();
+        final AddUserForm addUserForm = aCompleteAddUserForm();
 
         final Configuration config = Configuration.builder()
                 .withPropertyEditor(new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN), LocalDate.class)
@@ -52,7 +52,7 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
 
     @Test
     public void fullTestPutMethod() throws Exception {
-        final AddUserForm addUserForm = aCompletedAddUserForm();
+        final AddUserForm addUserForm = aCompleteAddUserForm();
 
         final Configuration config = Configuration.builder()
                 .withPropertyEditor(new CustomLocalDatePropertyEditor(DATE_FORMAT_PATTERN), LocalDate.class)
@@ -61,7 +61,7 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
                 .andExpect(MockMvcResultMatchers.model().hasNoErrors());
     }
 
-    private AddUserForm aCompletedAddUserForm() {
+    private AddUserForm aCompleteAddUserForm() {
         final List<String> usernames = List.of("john.doe", "jdoe");
         return AddUserForm.builder()
                 .firstName("John").name("Doe")
@@ -107,7 +107,7 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
 
         @Test
         public void withParamsFullTestGetMethod() throws Exception {
-            final AddUserForm addUserForm = aCompletedAddUserForm();
+            final AddUserForm addUserForm = aCompleteAddUserForm();
 
             mockMvc.perform(get(USERS_ENDPOINT).with(MockMvcRequestBuilderUtils.form(addUserForm)))
                     .andExpect(MockMvcResultMatchers.model().hasNoErrors());
@@ -115,7 +115,7 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
 
         @Test
         public void withParamsFullTestPutMethod() throws Exception {
-            final AddUserForm addUserForm = aCompletedAddUserForm();
+            final AddUserForm addUserForm = aCompleteAddUserForm();
 
             mockMvc.perform(put(USERS_ENDPOINT).with(MockMvcRequestBuilderUtils.form(addUserForm)))
                     .andExpect(MockMvcResultMatchers.model().hasNoErrors());
@@ -123,7 +123,7 @@ public class MockMvcRequestBuilderUtilsSmokeTests {
 
         @Test
         public void withParamsFullTestPostMethod() throws Exception {
-            final AddUserForm addUserForm = aCompletedAddUserForm();
+            final AddUserForm addUserForm = aCompleteAddUserForm();
 
             mockMvc.perform(post(USERS_ENDPOINT).with(MockMvcRequestBuilderUtils.form(addUserForm)))
                     .andExpect(MockMvcResultMatchers.model().hasNoErrors());
