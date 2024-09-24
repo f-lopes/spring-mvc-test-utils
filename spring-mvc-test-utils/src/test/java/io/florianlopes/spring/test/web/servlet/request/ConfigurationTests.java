@@ -11,13 +11,12 @@ import java.math.BigInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ConfigurationTests {
+class ConfigurationTests {
 
     @Test
     void throwsIllegalArgumentExceptionWhenFieldPredicateIsNull() {
         assertThrows(NullPointerException.class, () -> Configuration.builder()
-                .fieldPredicate(null)
-                .build());
+                .fieldPredicate(null));
     }
 
     @Test
@@ -67,8 +66,7 @@ public class ConfigurationTests {
     @Test
     void registerNullPropertyEditorThrowsNullPointerException() {
         assertThrows(NullPointerException.class, () -> Configuration.builder()
-                .withPropertyEditor(null, BigInteger.class)
-                .build());
+                .withPropertyEditor(null, BigInteger.class));
     }
 
     @Test
@@ -114,21 +112,21 @@ public class ConfigurationTests {
         private final Configuration defaultConfiguration = Configuration.DEFAULT;
 
         @Test
-        public void includesFinalFields() throws NoSuchFieldException {
+        void includesFinalFields() throws NoSuchFieldException {
             final Field finalField = TestClass.class.getDeclaredField("finalField");
 
             assertTrue(defaultConfiguration.fieldPredicate().test(finalField));
         }
 
         @Test
-        public void excludesTransientFields() throws NoSuchFieldException {
+        void excludesTransientFields() throws NoSuchFieldException {
             final Field transientField = TestClass.class.getDeclaredField("transientField");
 
             assertFalse(defaultConfiguration.fieldPredicate().test(transientField));
         }
 
         @Test
-        public void excludesStaticFields() throws NoSuchFieldException {
+        void excludesStaticFields() throws NoSuchFieldException {
             final Field staticField = TestClass.class.getDeclaredField("STATIC_FIELD");
 
             assertFalse(defaultConfiguration.fieldPredicate().test(staticField));
@@ -141,14 +139,14 @@ public class ConfigurationTests {
         private final Configuration excludeFinalConfiguration = Configuration.EXCLUDE_FINAL;
 
         @Test
-        public void excludesFinalFields() throws NoSuchFieldException {
+        void excludesFinalFields() throws NoSuchFieldException {
             final Field finalField = TestClass.class.getDeclaredField("finalField");
 
             assertFalse(excludeFinalConfiguration.fieldPredicate().test(finalField));
         }
 
         @Test
-        public void excludesTransientFields() throws NoSuchFieldException {
+        void excludesTransientFields() throws NoSuchFieldException {
             final Field transientField = TestClass.class.getDeclaredField("transientField");
 
             assertFalse(excludeFinalConfiguration.fieldPredicate().test(transientField));
@@ -161,14 +159,14 @@ public class ConfigurationTests {
         private final Configuration includeTransientConfiguration = Configuration.INCLUDE_TRANSIENT;
 
         @Test
-        public void includesTransientFields() throws NoSuchFieldException {
+        void includesTransientFields() throws NoSuchFieldException {
             final Field transientField = TestClass.class.getDeclaredField("transientField");
 
             assertTrue(includeTransientConfiguration.fieldPredicate().test(transientField));
         }
 
         @Test
-        public void excludesFinalFields() throws NoSuchFieldException {
+        void excludesFinalFields() throws NoSuchFieldException {
             final Field finalField = TestClass.class.getDeclaredField("finalField");
 
             assertFalse(includeTransientConfiguration.fieldPredicate().test(finalField));
@@ -181,14 +179,14 @@ public class ConfigurationTests {
         private final Configuration includeStaticConfiguration = Configuration.INCLUDE_STATIC;
 
         @Test
-        public void includesStaticFields() throws NoSuchFieldException {
+        void includesStaticFields() throws NoSuchFieldException {
             final Field staticField = TestClass.class.getDeclaredField("STATIC_FIELD");
 
             assertTrue(includeStaticConfiguration.fieldPredicate().test(staticField));
         }
 
         @Test
-        public void excludesFinalFields() throws NoSuchFieldException {
+        void excludesFinalFields() throws NoSuchFieldException {
             final Field finalField = TestClass.class.getDeclaredField("finalField");
 
             assertFalse(includeStaticConfiguration.fieldPredicate().test(finalField));

@@ -462,7 +462,7 @@ public class MockMvcRequestBuilderUtilsTests {
             }
 
             @Test
-            public void excludesTransientFields() {
+            void excludesTransientFields() {
                 final ConfigurationForm form = new ConfigurationForm();
                 form.setTransientName("transientName");
 
@@ -473,7 +473,7 @@ public class MockMvcRequestBuilderUtilsTests {
             }
 
             @Test
-            public void excludesStaticFields() {
+            void excludesStaticFields() {
                 final ConfigurationForm form = new ConfigurationForm();
 
                 final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilderUtils.postForm(POST_FORM_URL, form);

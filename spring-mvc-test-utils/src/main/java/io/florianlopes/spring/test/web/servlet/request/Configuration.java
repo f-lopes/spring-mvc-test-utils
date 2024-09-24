@@ -124,6 +124,9 @@ public class Configuration {
 
     static class FieldPredicates {
 
+        private FieldPredicates() {
+        }
+
         public static boolean isNotFinal(Field field) {
             return !Modifier.isFinal(field.getModifiers());
         }
