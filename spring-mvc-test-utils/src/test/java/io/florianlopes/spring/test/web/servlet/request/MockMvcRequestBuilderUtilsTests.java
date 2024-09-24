@@ -416,7 +416,6 @@ public class MockMvcRequestBuilderUtilsTests {
 
         @Test
         void registerMultiplePropertyEditors() {
-            // Registering a property editor should override default conversion strategy
             final PropertyEditorSupport propertyEditor = new PropertyEditorSupport() {
                 @Override
                 public String getAsText() {

@@ -37,7 +37,7 @@ class FormRequestPostProcessorTests {
     }
 
     @Test
-    void withParamsNullForm() {
+    void nullForm() {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(POST_FORM_URL)
                 .with(MockMvcRequestBuilderUtils.form(null));
         final MockHttpServletRequest request = mockHttpServletRequestBuilder.buildRequest(servletContext);
@@ -47,7 +47,7 @@ class FormRequestPostProcessorTests {
     }
 
     @Test
-    void withParamsNullAndEmptyFields() {
+    void nullAndEmptyFields() {
         final MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(POST_FORM_URL)
                 .with(MockMvcRequestBuilderUtils.form(
                         AddUserForm.builder()
@@ -65,7 +65,7 @@ class FormRequestPostProcessorTests {
     }
 
     @Test
-    void withParamsSimpleFields() {
+    void simpleFields() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .firstName("John")
                 .currentAddress(TestFixtures.anAddress())
@@ -82,7 +82,7 @@ class FormRequestPostProcessorTests {
     }
 
     @Test
-    void withParamsSimpleCollection() {
+    void simpleCollection() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .usernames(List.of("john.doe", "jdoe"))
                 .build();
@@ -97,7 +97,7 @@ class FormRequestPostProcessorTests {
     }
 
     @Test
-    void withParamsComplexCollection() {
+    void complexCollection() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .diplomas(List.of(
                         new AddUserForm.Diploma("License", LocalDate.now().minusYears(2)),
@@ -119,7 +119,7 @@ class FormRequestPostProcessorTests {
     }
 
     @Test
-    void withParamsSimpleArray() {
+    void simpleArray() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .usernamesArray(new String[]{"john.doe", "jdoe"})
                 .build();
@@ -133,7 +133,7 @@ class FormRequestPostProcessorTests {
     }
 
     @Test
-    void withParamsComplexArray() {
+    void complexArray() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .formerAddresses(new AddUserForm.Address[]{
                         new AddUserForm.Address(10, "Street 10", 5222, "Chicago"),
@@ -156,7 +156,7 @@ class FormRequestPostProcessorTests {
     }
 
     @Test
-    void withParamsEnumField() {
+    void enumField() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .gender(AddUserForm.Gender.MALE)
                 .build();
@@ -169,7 +169,7 @@ class FormRequestPostProcessorTests {
     }
 
     @Test
-    void withParamsSimpleMapField() {
+    void simpleMapField() {
         final Map<String, String> metadatas = new HashMap<>();
         metadatas.put("firstName", "John");
         metadatas.put("name", "Doe");
@@ -188,7 +188,7 @@ class FormRequestPostProcessorTests {
     }
 
     @Test
-    void withParamsComplexMapField() {
+    void complexMapField() {
         final LocalDate mscDate = LocalDate.now();
         final LocalDate licenseDate = LocalDate.now().minusYears(2);
         final AddUserForm addUserForm = AddUserForm.builder()
@@ -212,7 +212,7 @@ class FormRequestPostProcessorTests {
     }
 
     @Test
-    void withParamsBigDecimal() {
+    void bigDecimal() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .identificationNumber(BigDecimal.TEN)
                 .build();
@@ -225,7 +225,7 @@ class FormRequestPostProcessorTests {
     }
 
     @Test
-    void withParamsBigInteger() {
+    void bigInteger() {
         final AddUserForm addUserForm = AddUserForm.builder()
                 .identificationNumberBigInt(BigInteger.TEN)
                 .build();
@@ -238,7 +238,7 @@ class FormRequestPostProcessorTests {
     }
 
     @Test
-    void withParamsRegisterPropertyEditor() {
+    void registerPropertyEditor() {
         // Registering a property editor should override default conversion strategy
         final PropertyEditorSupport bigIntegerPropertyEditor = new PropertyEditorSupport() {
             @Override

@@ -70,7 +70,7 @@ class ConfigurationTests {
     }
 
     @Test
-    void registersMultiplePropertyEditor() {
+    void registersMultiplePropertyEditors() {
         final PropertyEditorSupport propertyEditorForBigInteger = new PropertyEditorSupport() {
             @Override
             public String getAsText() {

@@ -193,7 +193,7 @@ class FormFieldWrapper {
         return this.configuration;
     }
 
-    private String getIndex() {
+    private String getIndexOrPosition() {
         return indexOrPosition;
     }
 
@@ -214,10 +214,10 @@ class FormFieldWrapper {
         final String path = getPath();
         if (this.parent != null) {
             if (this.parent.hasIndexOrPosition()) {
-                return String.format("%s[%s].%s", this.parent.getParent().getNestedPath(), this.parent.getIndex(), path);
+                return String.format("%s[%s].%s", this.parent.getParent().getNestedPath(), this.parent.getIndexOrPosition(), path);
             } else if (StringUtils.isNotEmpty(this.parent.getNestedPath())) {
                 if (this.hasIndexOrPosition()) {
-                    return String.format("%s[%s]%s", this.parent.getNestedPath(), this.getIndex(), path);
+                    return String.format("%s[%s]%s", this.parent.getNestedPath(), this.getIndexOrPosition(), path);
                 } else {
                     return String.format("%s.%s", this.parent.getNestedPath(), path);
                 }
