@@ -3,12 +3,10 @@
 # Spring MVC Test utils
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.florianlopes/spring-mvc-test-utils/badge.svg)](https://search.maven.org/#artifactdetails%7Cio.florianlopes%7Cspring-mvc-test-utils%7C3.2.0%7Cjar)
-[![Build Status](https://travis-ci.org/f-lopes/spring-mvc-test-utils.svg?branch=develop)](https://travis-ci.org/f-lopes/spring-mvc-test-utils)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/f-lopes/spring-mvc-test-utils/build.yml)
 [![codecov](https://codecov.io/gh/f-lopes/spring-mvc-test-utils/branch/main/graph/badge.svg?token=2yY70RB1tw)](https://codecov.io/gh/f-lopes/spring-mvc-test-utils)
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1e521e339dc446328b7ccc52faaa7648)](https://www.codacy.com/app/f-lopes/spring-mvc-test-utils?utm_source=github.com&utm_medium=referral&utm_content=f-lopes/spring-mvc-test-utils&utm_campaign=badger)
-[![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/f-lopes/spring-mvc-test-utils.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/f-lopes/spring-mvc-test-utils/context:java)
-[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=f-lopes/spring-mvc-test-utils)](https://dependabot.com)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/26a17031a52941b0bc67cfacaf30c74c)](https://app.codacy.com/gh/f-lopes/spring-mvc-test-utils/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 Test library aimed to ease Spring MVC form validation tests. Easily post an entire form to a given url.
 
