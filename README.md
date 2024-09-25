@@ -28,7 +28,9 @@ Add this dependency to your `pom.xml` file:
 </dependency>
 ```
 
-_**Note:** since version `4.0.0`, `Java 11` is no longer supported, `Java 17` is the minimum supported version._
+**Changes for 4.0.0 version**
+* `Java 11` is no longer supported, `Java 17` is the minimum supported version._
+* "Complex" datatypes for Map values are now supported (see corresponding [test](https://github.com/f-lopes/spring-mvc-test-utils/blob/main/spring-mvc-test-utils/src/test/java/io/florianlopes/spring/test/web/servlet/request/MockMvcRequestBuilderUtilsTests.java#L242))
 
 _This library is tested with Spring Framework `6.1.12` along with Java `17` and `21` (
 see [smoke-tests](https://github.com/f-lopes/spring-mvc-test-utils/tree/main/smoke-tests/src/tests/java/io/florianlopes/spring/test/web/servlet/request/MockMvcRequestBuilderUtilsSmokeTests.java)
