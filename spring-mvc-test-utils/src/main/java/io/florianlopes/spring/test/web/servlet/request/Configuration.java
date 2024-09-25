@@ -1,12 +1,18 @@
 package io.florianlopes.spring.test.web.servlet.request;
 
+import org.springframework.beans.PropertyEditorRegistrySupport;
+
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorSupport;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
- * Configuration class that allows the exclusion of specific fields.
+ * Configuration class that allows inclusion/exclusion of specific fields.
+ * Also allows to register one or more {@link PropertyEditor}
+ * to customize how field values are added to the HTTP request
  */
 public class Configuration {
 
@@ -17,21 +23,23 @@ public class Configuration {
             .build();
     public static final Configuration EXCLUDE_FINAL = new Builder()
             .includeFinal(false)
-            .includeTransient(true)
+            .includeTransient(false)
             .build();
     public static final Configuration INCLUDE_TRANSIENT = new Builder()
-            .includeFinal(false)
             .includeTransient(true)
+            .includeFinal(false)
             .build();
     public static final Configuration INCLUDE_STATIC = new Builder()
-            .includeFinal(false)
             .includeStatic(true)
+            .includeFinal(false)
             .build();
 
     private final Predicate<Field> fieldPredicate;
+    private final PropertyEditorRegistrySupport propertyEditorRegistrySupport;
 
-    private Configuration(Predicate<Field> fieldPredicate) {
+    private Configuration(Predicate<Field> fieldPredicate, PropertyEditorRegistrySupport propertyEditorRegistrySupport) {
         this.fieldPredicate = fieldPredicate;
+        this.propertyEditorRegistrySupport = propertyEditorRegistrySupport;
     }
 
     /**
@@ -45,32 +53,28 @@ public class Configuration {
         return fieldPredicate;
     }
 
+    public PropertyEditor propertyEditorFor(Class<?> propertyEditorClass) {
+        return this.propertyEditorRegistrySupport.hasCustomEditorForElement(propertyEditorClass, null) ?
+                this.propertyEditorRegistrySupport.findCustomEditor(propertyEditorClass, null) :
+                this.propertyEditorRegistrySupport.getDefaultEditor(propertyEditorClass);
+    }
+
+    public boolean hasPropertyEditorFor(Class<?> propertyEditorClass) {
+        return this.propertyEditorRegistrySupport.hasCustomEditorForElement(propertyEditorClass, null) ||
+               this.propertyEditorRegistrySupport.getDefaultEditor(propertyEditorClass) != null;
+    }
+
     public static class Builder {
 
-        private static final Predicate<Field> BASE_PREDICATE = Builder::isNotSynthetic;
+        private static final Predicate<Field> BASE_PREDICATE = FieldPredicates::isNotSynthetic;
 
+        private final PropertyEditorRegistrySupport propertyEditorRegistrySupport = new PropertyEditorRegistrySupport();
         private Predicate<Field> fieldPredicate;
         private boolean includeFinal = true;
         private boolean includeTransient = false;
         private boolean includeStatic = false;
 
         private Builder() {
-        }
-
-        private static boolean isNotFinal(Field field) {
-            return !Modifier.isFinal(field.getModifiers());
-        }
-
-        private static boolean isNotTransient(Field field) {
-            return !Modifier.isTransient(field.getModifiers());
-        }
-
-        private static boolean isNotStatic(Field field) {
-            return !Modifier.isStatic(field.getModifiers());
-        }
-
-        private static boolean isNotSynthetic(Field field) {
-            return !field.isSynthetic();
         }
 
         public Builder fieldPredicate(Predicate<Field> fieldPredicate) {
@@ -93,24 +97,50 @@ public class Configuration {
             return this;
         }
 
+        public Builder withPropertyEditor(PropertyEditorSupport propertyEditor, Class<?> propertyEditorClass) {
+            Objects.requireNonNull(propertyEditor, "propertyEditor cannot be null");
+            this.propertyEditorRegistrySupport.registerCustomEditor(propertyEditorClass, propertyEditor);
+            return this;
+        }
+
         public Configuration build() {
             Predicate<Field> fieldPredicate = this.fieldPredicate != null ? BASE_PREDICATE.and(this.fieldPredicate) : BASE_PREDICATE;
 
             if (!this.includeFinal) {
-                fieldPredicate = fieldPredicate.and(Builder::isNotFinal);
+                fieldPredicate = fieldPredicate.and(FieldPredicates::isNotFinal);
             }
 
             if (!this.includeTransient) {
-                fieldPredicate = fieldPredicate.and(Builder::isNotTransient);
+                fieldPredicate = fieldPredicate.and(FieldPredicates::isNotTransient);
             }
 
             if (!this.includeStatic) {
-                fieldPredicate = fieldPredicate.and(Builder::isNotStatic);
+                fieldPredicate = fieldPredicate.and(FieldPredicates::isNotStatic);
             }
 
-            return new Configuration(fieldPredicate);
+            return new Configuration(fieldPredicate, this.propertyEditorRegistrySupport);
         }
-
     }
 
+    static class FieldPredicates {
+
+        private FieldPredicates() {
+        }
+
+        public static boolean isNotFinal(Field field) {
+            return !Modifier.isFinal(field.getModifiers());
+        }
+
+        public static boolean isNotTransient(Field field) {
+            return !Modifier.isTransient(field.getModifiers());
+        }
+
+        public static boolean isNotStatic(Field field) {
+            return !Modifier.isStatic(field.getModifiers());
+        }
+
+        public static boolean isNotSynthetic(Field field) {
+            return !field.isSynthetic();
+        }
+    }
 }

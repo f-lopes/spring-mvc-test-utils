@@ -2,20 +2,19 @@ package io.florianlopes.spring.test.web.servlet.request;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.beans.PropertyEditor;
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
  * Property editor for {@link java.time.LocalDate}
- * Register this property editor with MockMvcRequestBuilderUtils#registerPropertyEditor
+ * Register this property editor with Configuration.Builder#withPropertyEditor(PropertyEditorSupport, Class)
  *
  * @author Florian Lopes
  * @see java.time.LocalDate
  * @see java.time.format.DateTimeFormatter
  * @see org.springframework.validation.DataBinder#registerCustomEditor
- * @see io.florianlopes.spring.test.web.servlet.request.MockMvcRequestBuilderUtils#registerPropertyEditor(Class, PropertyEditor)
+ * @see Configuration.Builder#withPropertyEditor(PropertyEditorSupport, Class)
  */
 class CustomLocalDatePropertyEditor extends PropertyEditorSupport {
 
