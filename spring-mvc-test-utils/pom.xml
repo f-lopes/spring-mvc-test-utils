@@ -38,6 +38,7 @@
         <maven-jxr-plugin.version>3.4.0</maven-jxr-plugin.version>
         <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
         <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <jreleaser-maven-plugin.version>1.14.0</jreleaser-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -195,6 +196,13 @@
     <profiles>
         <profile>
             <id>release</id>
+            <properties>
+                <spotbugs.skip>true</spotbugs.skip>
+                <pmd.skip>true</pmd.skip>
+                <skipTests>true</skipTests>
+                <altDeploymentRepository>local::file:${project.build.outputDirectory}/staging-deploy
+                </altDeploymentRepository>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -216,6 +224,9 @@
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                                <configuration>
+                                    <attach>true</attach>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -229,6 +240,9 @@
                                 <goals>
                                     <goal>jar-no-fork</goal>
                                 </goals>
+                                <configuration>
+                                    <attach>true</attach>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -251,32 +265,38 @@
                             </execution>
                         </executions>
                     </plugin>
+
                     <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>${nexus-staging-maven-plugin.version}</version>
-                        <extensions>true</extensions>
-                        <executions>
-                            <execution>
-                                <id>default-deploy</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>deploy</goal>
-                                </goals>
-                            </execution>
-                        </executions>
+                        <groupId>org.jreleaser</groupId>
+                        <artifactId>jreleaser-maven-plugin</artifactId>
+                        <version>${jreleaser-maven-plugin.version}</version>
                         <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <jreleaser>
+                                <signing>
+                                    <active>ALWAYS</active>
+                                    <armored>true</armored>
+                                </signing>
+                                <deploy>
+                                    <maven>
+                                        <nexus2>
+                                            <maven-central>
+                                                <active>ALWAYS</active>
+                                                <url>https://oss.sonatype.org/service/local</url>
+                                                <snapshotUrl>
+                                                    https://s01.oss.sonatype.org/content/repositories/snapshots/
+                                                </snapshotUrl>
+                                                <closeRepository>true</closeRepository>
+                                                <releaseRepository>false</releaseRepository>
+                                                <stagingRepositories>target/staging-deploy</stagingRepositories>
+                                            </maven-central>
+                                        </nexus2>
+                                    </maven>
+                                </deploy>
+                            </jreleaser>
                         </configuration>
                     </plugin>
                 </plugins>
             </build>
-            <properties>
-                <spotbugs.skip>true</spotbugs.skip>
-                <pmd.skip>true</pmd.skip>
-                <skipTests>true</skipTests>
-            </properties>
         </profile>
     </profiles>
 

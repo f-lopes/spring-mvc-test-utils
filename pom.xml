@@ -46,15 +46,15 @@
 
 		<slf4j-api.version>1.7.36</slf4j-api.version>
 
-		<junit-jupiter.version>5.11.0</junit-jupiter.version>
+		<junit-jupiter.version>5.11.1</junit-jupiter.version>
 
 		<lombok.version>1.18.34</lombok.version>
 
 		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-		<maven-surefire-plugin.version>3.4.0</maven-surefire-plugin.version>
+		<maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
 		<versions-maven-plugin.version>2.17.1</versions-maven-plugin.version>
 		<maven-pmd-plugin.version>3.25.0</maven-pmd-plugin.version>
-		<spotbugs-maven-plugin.version>4.8.6.3</spotbugs-maven-plugin.version>
+		<spotbugs-maven-plugin.version>4.8.6.4</spotbugs-maven-plugin.version>
 
 		<sonar.organization>f-lopes</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
