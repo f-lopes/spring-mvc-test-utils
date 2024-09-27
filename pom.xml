@@ -6,7 +6,7 @@
 
     <groupId>io.florianlopes</groupId>
 	<artifactId>spring-mvc-test-utils-parent</artifactId>
-	<version>0.0.0</version>
+	<version>${revision}${changelist}</version>
 	<packaging>pom</packaging>
 
 	<name>spring-mvc-test-utils-parent</name>
