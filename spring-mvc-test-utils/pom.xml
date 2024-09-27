@@ -276,6 +276,9 @@
                                     <active>ALWAYS</active>
                                     <armored>true</armored>
                                 </signing>
+                                <project>
+                                    <copyright>2024 Florian Lopes</copyright>
+                                </project>
                                 <deploy>
                                     <maven>
                                         <nexus2>
