@@ -52,7 +52,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B -pl '!smoke-tests' clean install -Drevision=${{ steps.candidate_version.outputs.candidate_version_revision }} -Dchangelist=-rc org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=f-lopes_spring-mvc-test-utils
+        run: mvn -B clean install -Drevision=${{ steps.candidate_version.outputs.candidate_version_revision }} -Dchangelist=-rc org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=f-lopes_spring-mvc-test-utils
 
       - name: Upload JaCoCo coverage reports to Codecov
         uses: codecov/codecov-action@v4.5.0
@@ -88,4 +88,4 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Run smoke tests with Java ${{ matrix.java }} for spring-mvc-test-utils ${{ needs.build.outputs.candidate_version_revision }}-rc version
-        run: mvn -B -pl 'smoke-tests' -Dspring-mvc-test-utils.version=${candidate_version_revision}-rc -Djava.version=${{ matrix.java }} clean verify
+        run: mvn -B -Psmoke-tests -Dspring-mvc-test-utils.version=${candidate_version_revision}-rc -Djava.version=${{ matrix.java }} clean verify
