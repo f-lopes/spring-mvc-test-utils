@@ -2,7 +2,7 @@
 
 # Spring MVC Test utils
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.florianlopes/spring-mvc-test-utils/badge.svg)](https://search.maven.org/#artifactdetails%7Cio.florianlopes%7Cspring-mvc-test-utils%7C3.2.0%7Cjar)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.florianlopes/spring-mvc-test-utils/badge.svg)](https://search.maven.org/#artifactdetails%7Cio.florianlopes%7Cspring-mvc-test-utils%7C4.0.0%7Cjar)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/f-lopes/spring-mvc-test-utils/build.yml)
 [![codecov](https://codecov.io/gh/f-lopes/spring-mvc-test-utils/branch/main/graph/badge.svg?token=2yY70RB1tw)](https://codecov.io/gh/f-lopes/spring-mvc-test-utils)
 
@@ -21,7 +21,7 @@ Add this dependency to your `pom.xml` file:
 <dependency>
     <groupId>io.florianlopes</groupId>
     <artifactId>spring-mvc-test-utils</artifactId>
-    <version>3.2.0</version>
+    <version>4.0.0</version>
     <scope>test</scope>
 </dependency>
 ```
