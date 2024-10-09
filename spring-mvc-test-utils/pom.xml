@@ -19,7 +19,7 @@
 
     <properties>
         <commons-lang3.version>3.17.0</commons-lang3.version>
-        <logback-classic.version>1.5.8</logback-classic.version>
+        <logback-classic.version>1.5.9</logback-classic.version>
         <hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
         <slf4j-api.version>2.0.16</slf4j-api.version>
 
