@@ -1,0 +1,9 @@
+version: '3'
+
+tasks:
+  default:
+    - task: build
+  build:
+    desc: Build project using Docker (Maven 3.9.10, Java 21)
+    cmds:
+      - docker run --rm -v ~/.m2/:/root/.m2/ -v $(pwd):/workspace -w /workspace maven:3.9.10-eclipse-temurin-21-noble mvn clean verify
