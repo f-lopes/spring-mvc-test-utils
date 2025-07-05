@@ -4,7 +4,6 @@ import io.florianlopes.spring.test.web.servlet.request.assertion.RequestParamete
 import jakarta.servlet.ServletContext;
 import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
@@ -22,7 +21,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Nested
 class FormRequestPostProcessorTests {
 
     private static final LogCaptor LOG_CAPTOR = LogCaptor.forClass(FormRequestPostProcessor.class);

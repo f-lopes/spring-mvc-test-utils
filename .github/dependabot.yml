@@ -12,5 +12,4 @@ updates:
     - 4.2.2
   - dependency-name: org.springframework:spring-test
     versions:
-    - 5.3.4
-    - 5.3.5
+    - 6.2.8
