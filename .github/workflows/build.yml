@@ -55,7 +55,7 @@ jobs:
         run: ./mvnw -B clean install -Drevision=${{ steps.candidate_version.outputs.candidate_version_revision }} -Dchangelist=-rc org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=f-lopes_spring-mvc-test-utils
 
       - name: Upload JaCoCo coverage reports to Codecov
-        uses: codecov/codecov-action@v4.5.0
+        uses: codecov/codecov-action@v7.0.0
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 

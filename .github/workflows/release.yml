@@ -38,7 +38,7 @@ jobs:
         run: ./mvnw -B build-helper:parse-version versions:set-property -Dproperty=revision -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion} versions:commit flatten:clean
 
       - name: Commit & Push changes
-        uses: actions-js/push@master
+        uses: actions-js/push@v1.6
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           message: Set next development version
