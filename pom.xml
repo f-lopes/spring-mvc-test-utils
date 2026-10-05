@@ -47,7 +47,7 @@
 
 		<junit-jupiter.version>5.11.1</junit-jupiter.version>
 
-		<lombok.version>1.18.34</lombok.version>
+		<lombok.version>1.18.48</lombok.version>
 
 		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
 		<maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
