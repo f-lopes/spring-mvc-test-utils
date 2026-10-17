@@ -20,7 +20,7 @@
     <properties>
         <commons-lang3.version>3.21.0</commons-lang3.version>
         <logback-classic.version>1.6.5</logback-classic.version>
-        <hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
+        <hibernate-validator.version>9.1.4.Final</hibernate-validator.version>
         <slf4j-api.version>2.0.20</slf4j-api.version>
 
         <assertj-core.version>3.27.7</assertj-core.version>
